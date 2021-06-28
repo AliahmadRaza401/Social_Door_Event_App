@@ -44,6 +44,7 @@ class _LoginState extends State<Login> {
       body: jsonEncode({"email": email, "password": password}),
     );
     var data = jsonDecode(response.body);
+    print(data);
     if (data['success'] == true) {
       debugPrint('login success');
       setState(() {

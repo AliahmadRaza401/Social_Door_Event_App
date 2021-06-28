@@ -11,8 +11,6 @@ class VerifyPhonenumber extends StatefulWidget {
 }
 
 class _VerifyPhonenumberState extends State<VerifyPhonenumber> {
-
-
   TextEditingController textEditingController = TextEditingController();
   // ..text = "123456";
 
@@ -45,7 +43,6 @@ class _VerifyPhonenumberState extends State<VerifyPhonenumber> {
       ),
     );
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -93,29 +90,29 @@ class _VerifyPhonenumberState extends State<VerifyPhonenumber> {
                     ],
                   ),
                   Container(
-                    margin: EdgeInsets.only(top: 90,bottom: 60),
+                    margin: EdgeInsets.only(top: 90, bottom: 60),
                     alignment: Alignment.center,
-                    width: MediaQuery.of(context).size.width* 0.8,
+                    width: MediaQuery.of(context).size.width * 0.8,
                     child: Column(
                       children: [
-                        Text("Verify your number", style: TextStyle(
-                            fontSize: 28,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white
-                        ),),
+                        Text(
+                          "Verify your number",
+                          style: TextStyle(
+                              fontSize: 28,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white),
+                        ),
                         SizedBox(
                           height: 10,
                         ),
-                        Text("Please enter the 4 digit code send to",
-                          style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.white
-                          ),),
-                        Text("your number",
-                          style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.white
-                          ),),
+                        Text(
+                          "Please enter the 4 digit code send to",
+                          style: TextStyle(fontSize: 14, color: Colors.white),
+                        ),
+                        Text(
+                          "your number",
+                          style: TextStyle(fontSize: 14, color: Colors.white),
+                        ),
                       ],
                     ),
                   ),
@@ -150,7 +147,9 @@ class _VerifyPhonenumberState extends State<VerifyPhonenumber> {
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 30.0),
                           child: Text(
-                            hasError ? "*Please fill up all the cells properly" : "",
+                            hasError
+                                ? "*Please fill up all the cells properly"
+                                : "",
                             style: TextStyle(
                                 color: Colors.red,
                                 fontSize: 12,
@@ -162,26 +161,28 @@ class _VerifyPhonenumberState extends State<VerifyPhonenumber> {
                           margin: EdgeInsets.only(bottom: 10),
                           width: MediaQuery.of(context).size.width * 0.8,
                           child: FlatButton(
-                            child: Text("Confirm",style: TextStyle(
-                                fontSize: 18
-                            ),),
+                            child: Text(
+                              "Confirm",
+                              style: TextStyle(fontSize: 18),
+                            ),
                             onPressed: () {
-                                formKey.currentState!.validate();
-                                // conditions for validating
-                                if (currentText.length != 6 || currentText != "123456") {
-                                  errorController.add(ErrorAnimationType
-                                      .shake); // Triggering error shake animation
-                                  setState(() {
-                                    hasError = true;
-                                  });
-                                } else {
-                                  setState(
-                                        () {
-                                      hasError = false;
-                                      snackBar("OTP Verified!!");
-                                    },
-                                  );
-                                }
+                              formKey.currentState!.validate();
+                              // conditions for validating
+                              if (currentText.length != 6 ||
+                                  currentText != "123456") {
+                                errorController.add(ErrorAnimationType
+                                    .shake); // Triggering error shake animation
+                                setState(() {
+                                  hasError = true;
+                                });
+                              } else {
+                                setState(
+                                  () {
+                                    hasError = false;
+                                    snackBar("OTP Verified!!");
+                                  },
+                                );
+                              }
                             },
                             color: Color(0xffFF5018),
                             textColor: Colors.white,
@@ -195,7 +196,8 @@ class _VerifyPhonenumberState extends State<VerifyPhonenumber> {
                           children: [
                             Text(
                               "Didn't receive the code? ",
-                              style: TextStyle(color: Colors.white54, fontSize: 15),
+                              style: TextStyle(
+                                  color: Colors.white54, fontSize: 15),
                             ),
                             TextButton(
                                 onPressed: () => snackBar("OTP resend!!"),
@@ -217,25 +219,22 @@ class _VerifyPhonenumberState extends State<VerifyPhonenumber> {
                 ],
               ),
             ),
-          )
-      ),
+          )),
     );
   }
 
-
-  Widget otpField(){
+  Widget otpField() {
     return Form(
       key: formKey,
       child: Padding(
-          padding: const EdgeInsets.symmetric(
-              vertical: 8.0, horizontal: 30),
+          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 30),
           child: PinCodeTextField(
             appContext: context,
             pastedTextStyle: TextStyle(
               color: Color(0xffFF5018),
               fontWeight: FontWeight.bold,
             ),
-            length: 4,
+            length: 6,
             // obscureText: true,
             obscuringCharacter: '*',
             // obscuringWidget: FlutterLogo(
@@ -244,7 +243,7 @@ class _VerifyPhonenumberState extends State<VerifyPhonenumber> {
             blinkWhenObscuring: true,
             animationType: AnimationType.fade,
             validator: (v) {
-              if (v!.length < 3) {
+              if (v!.length < 5) {
                 return "I'm from validator";
               } else {
                 return null;
@@ -255,10 +254,9 @@ class _VerifyPhonenumberState extends State<VerifyPhonenumber> {
               borderRadius: BorderRadius.circular(10),
               fieldHeight: 50,
               fieldWidth: 40,
-              activeFillColor:
-              hasError ? Colors.blue.shade100 : Colors.white,
+              activeFillColor: hasError ? Colors.blue.shade100 : Colors.white,
             ),
-            cursorColor: Color(0xffFF5018) ,
+            cursorColor: Color(0xffFF5018),
             animationDuration: Duration(milliseconds: 300),
             enableActiveFill: true,
             errorAnimationController: errorController,
@@ -291,29 +289,7 @@ class _VerifyPhonenumberState extends State<VerifyPhonenumber> {
             },
           )),
     );
-
   }
-
-  // Widget verifyInput(){
-  //   return OTPTextField(
-  //     length: 4,
-  //     width: MediaQuery.of(context).size.width,
-  //     textFieldAlignment: MainAxisAlignment.spaceAround,
-  //     fieldWidth: 55,
-  //     fieldStyle: FieldStyle.box,
-  //     outlineBorderRadius: 15,
-  //     style: TextStyle(
-  //         fontSize: 20,
-  //       color: Colors.white
-  //     ),
-  //   onChanged: (pin) {
-  //       print("Changed: " + pin);
-  //     },
-  //     onCompleted: (pin) {
-  //       print("Completed: " + pin);
-  //     },
-  //   );
-  // }
 
   Widget inputField(String name, icon) {
     return Container(
@@ -327,9 +303,7 @@ class _VerifyPhonenumberState extends State<VerifyPhonenumber> {
         decoration: new InputDecoration(
           contentPadding: EdgeInsets.symmetric(vertical: 50),
           labelText: name,
-          labelStyle: TextStyle(
-              fontWeight: FontWeight.bold
-          ),
+          labelStyle: TextStyle(fontWeight: FontWeight.bold),
           prefixIcon: Padding(
             padding: EdgeInsets.only(left: 1),
             child: icon,
@@ -342,11 +316,10 @@ class _VerifyPhonenumberState extends State<VerifyPhonenumber> {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.all(Radius.circular(10.0)),
-            borderSide: BorderSide(color: Color(0xffff5018),width: 3),
+            borderSide: BorderSide(color: Color(0xffff5018), width: 3),
           ),
         ),
       ),
     );
   }
-
 }
