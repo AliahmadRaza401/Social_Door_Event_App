@@ -50,6 +50,7 @@ class _LoginState extends State<Login> {
       setState(() {
         token = data['token'];
         error = "Login Successfully";
+        loading = false;
       });
       Navigator.of(context)
           .push(MaterialPageRoute(builder: (context) => Home()));

@@ -96,7 +96,7 @@ class _VerifyPhonenumberState extends State<VerifyPhonenumber> {
                     child: Column(
                       children: [
                         Text(
-                          "Verify your number",
+                          "Verify your account",
                           style: TextStyle(
                               fontSize: 28,
                               fontWeight: FontWeight.bold,
@@ -106,11 +106,11 @@ class _VerifyPhonenumberState extends State<VerifyPhonenumber> {
                           height: 10,
                         ),
                         Text(
-                          "Please enter the 4 digit code send to",
+                          "Please enter the 6 digit code send to",
                           style: TextStyle(fontSize: 14, color: Colors.white),
                         ),
                         Text(
-                          "your number",
+                          "your mail",
                           style: TextStyle(fontSize: 14, color: Colors.white),
                         ),
                       ],

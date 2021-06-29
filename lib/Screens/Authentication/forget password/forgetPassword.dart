@@ -134,7 +134,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                   ),
                   Container(
                     width: MediaQuery.of(context).size.width * 0.9,
-                    height: 250,
+                    height: 230,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
@@ -157,7 +157,12 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          inputField("Enter Email", Icon(Icons.call)),
+                          inputField(
+                              "Enter Email",
+                              Icon(
+                                Icons.email,
+                                color: Color(0xffFF5018),
+                              )),
                           Container(
                             height: 60,
                             margin: EdgeInsets.only(bottom: 10),
@@ -198,7 +203,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
   Widget inputField(String name, icon) {
     return Container(
       width: MediaQuery.of(context).size.width * 0.8,
-      height: 60,
+      height: 70,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
         color: Color(0xffDCDCE0),
@@ -214,9 +219,8 @@ class _ForgetPasswordState extends State<ForgetPassword> {
           RequiredValidator(errorText: "Required")
         ]),
         decoration: new InputDecoration(
-          contentPadding: EdgeInsets.symmetric(vertical: 20),
+          contentPadding: EdgeInsets.symmetric(vertical: 30),
           hintText: name,
-          hintStyle: TextStyle(fontWeight: FontWeight.bold),
           prefixIcon: Padding(
             padding: EdgeInsets.only(left: 1),
             child: icon,
