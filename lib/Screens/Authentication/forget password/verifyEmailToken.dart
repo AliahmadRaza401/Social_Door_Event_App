@@ -1,9 +1,11 @@
 import 'dart:async';
-
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:otp_text_field/otp_field.dart';
 import 'package:otp_text_field/style.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:social_door/Screens/Authentication/Update%20Password/updatePassword.dart';
 
 class VerifyPhonenumber extends StatefulWidget {
   @override
@@ -12,13 +14,13 @@ class VerifyPhonenumber extends StatefulWidget {
 
 class _VerifyPhonenumberState extends State<VerifyPhonenumber> {
   TextEditingController textEditingController = TextEditingController();
-  // ..text = "123456";
 
-  // ignore: close_sinks
   late StreamController<ErrorAnimationType> errorController;
 
   bool hasError = false;
   String currentText = "";
+  var error;
+  bool loading = false;
   final formKey = GlobalKey<FormState>();
 
   @override
@@ -32,6 +34,34 @@ class _VerifyPhonenumberState extends State<VerifyPhonenumber> {
     errorController.close();
 
     super.dispose();
+  }
+
+  tokenConfirm() async {
+    loading = true;
+    final response = await http.get(
+      Uri.parse(
+          'https://socialeventdoor.herokuapp.com/api/user/reset/$currentText'),
+    );
+    var data = jsonDecode(response.body);
+    print(data);
+
+    //display Error
+    if (data['success'] != true) {
+      print("Wrong.....................:");
+      setState(() {
+        error = data['message'];
+      });
+      showAlertDialog(context, error);
+    } else {
+      Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => UpdatePassword(
+                verifyToken: currentText,
+              )));
+      setState(() {
+        snackBar("OTP Verified!!");
+        loading = false;
+      });
+    }
   }
 
   // snackBar Widget
@@ -161,15 +191,18 @@ class _VerifyPhonenumberState extends State<VerifyPhonenumber> {
                           margin: EdgeInsets.only(bottom: 10),
                           width: MediaQuery.of(context).size.width * 0.8,
                           child: FlatButton(
-                            child: Text(
-                              "Confirm",
-                              style: TextStyle(fontSize: 18),
-                            ),
+                            child: loading == true
+                                ? CircularProgressIndicator(
+                                    color: Colors.white,
+                                  )
+                                : Text(
+                                    "Confirm",
+                                    style: TextStyle(fontSize: 18),
+                                  ),
                             onPressed: () {
                               formKey.currentState!.validate();
                               // conditions for validating
-                              if (currentText.length != 6 ||
-                                  currentText != "123456") {
+                              if (currentText.length != 6) {
                                 errorController.add(ErrorAnimationType
                                     .shake); // Triggering error shake animation
                                 setState(() {
@@ -179,9 +212,9 @@ class _VerifyPhonenumberState extends State<VerifyPhonenumber> {
                                 setState(
                                   () {
                                     hasError = false;
-                                    snackBar("OTP Verified!!");
                                   },
                                 );
+                                tokenConfirm();
                               }
                             },
                             color: Color(0xffFF5018),
@@ -279,6 +312,7 @@ class _VerifyPhonenumberState extends State<VerifyPhonenumber> {
               print(value);
               setState(() {
                 currentText = value;
+                print(currentText);
               });
             },
             beforeTextPaste: (text) {
@@ -291,35 +325,43 @@ class _VerifyPhonenumberState extends State<VerifyPhonenumber> {
     );
   }
 
-  Widget inputField(String name, icon) {
-    return Container(
-      width: MediaQuery.of(context).size.width * 0.8,
-      height: 60,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        color: Color(0xffDCDCE0),
+  // Dialog alert
+  showAlertDialog(BuildContext context, var error) {
+    setState(() {
+      loading = false;
+    });
+    // set up the buttons
+    Widget cancelButton = FlatButton(
+      child: Text("Okay"),
+      onPressed: () {
+        Navigator.pop(context);
+        // Navigator.of(context).push(new MaterialPageRoute(builder: (context)=> UserLogin()));
+      },
+    );
+    // Widget continueButton = FlatButton(
+    //   child: Text("Continue"),
+    //   onPressed: () {
+    //     // Navigator.of(context).pushReplacement(new MaterialPageRoute(builder: (context)=> UserRegistration(userMobile:mobileController.text)));
+    //   },
+    // );
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text("Please Try Again"),
+      content: Text(
+        error,
+        // style: TextStyle(fontSize: 18,fontFamily: Variable.fontStyle),
       ),
-      child: TextField(
-        decoration: new InputDecoration(
-          contentPadding: EdgeInsets.symmetric(vertical: 50),
-          labelText: name,
-          labelStyle: TextStyle(fontWeight: FontWeight.bold),
-          prefixIcon: Padding(
-            padding: EdgeInsets.only(left: 1),
-            child: icon,
-          ),
-          enabledBorder: const OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(10.0)),
-            borderSide: const BorderSide(
-              color: Colors.grey,
-            ),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(10.0)),
-            borderSide: BorderSide(color: Color(0xffff5018), width: 3),
-          ),
-        ),
-      ),
+      actions: [
+        cancelButton,
+        // continueButton,
+      ],
+    );
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
     );
   }
 }

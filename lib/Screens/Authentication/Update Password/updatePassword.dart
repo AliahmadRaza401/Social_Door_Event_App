@@ -4,20 +4,27 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:http/http.dart' as http;
+import 'package:social_door/Screens/Authentication/Login/login.dart';
 import 'package:social_door/Screens/Authentication/forget%20password/verifyEmailToken.dart';
+import 'package:social_door/Screens/Home/home.dart';
 
-class ForgetPassword extends StatefulWidget {
+class UpdatePassword extends StatefulWidget {
+  var verifyToken;
+  UpdatePassword({this.verifyToken});
   @override
-  _ForgetPasswordState createState() => _ForgetPasswordState();
+  _UpdatePasswordState createState() =>
+      _UpdatePasswordState(verifyToken: verifyToken);
 }
 
-class _ForgetPasswordState extends State<ForgetPassword> {
+class _UpdatePasswordState extends State<UpdatePassword> {
+  var verifyToken;
+  _UpdatePasswordState({this.verifyToken});
   final _formKey = GlobalKey<FormState>();
-  var email;
+  var password;
   var error;
   bool loading = false;
 
-  submit() {
+  updatePassword() {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       setState(() {
@@ -34,12 +41,13 @@ class _ForgetPasswordState extends State<ForgetPassword> {
 
   resetPassword() async {
     final response = await http.post(
-      Uri.parse('https://socialeventdoor.herokuapp.com/api/user/recover'),
+      Uri.parse(
+          'https://socialeventdoor.herokuapp.com/api/user/reset/$verifyToken'),
       headers: {
         'Content-Type': 'application/json',
       },
       body: jsonEncode({
-        "email": email,
+        "password": password,
       }),
     );
     var data = jsonDecode(response.body);
@@ -52,12 +60,23 @@ class _ForgetPasswordState extends State<ForgetPassword> {
       });
       showAlertDialog(context, error);
     } else {
+      snackBar("Password Update Successfully!");
       Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => VerifyPhonenumber()));
+          .push(MaterialPageRoute(builder: (context) => Login()));
       setState(() {
         loading = false;
       });
     }
+  }
+
+  // snackBar Widget
+  snackBar(String message) {
+    return ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        duration: Duration(seconds: 2),
+      ),
+    );
   }
 
   @override
@@ -112,7 +131,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                     child: Column(
                       children: [
                         Text(
-                          "Forget Password",
+                          "Update Password",
                           style: TextStyle(
                               fontSize: 28,
                               fontWeight: FontWeight.bold,
@@ -122,11 +141,11 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                           height: 10,
                         ),
                         Text(
-                          "Enter the Email address associated with",
+                          "Enter the New Password which you want",
                           style: TextStyle(fontSize: 14, color: Colors.white),
                         ),
                         Text(
-                          " your account",
+                          " to update",
                           style: TextStyle(fontSize: 14, color: Colors.white),
                         ),
                       ],
@@ -158,7 +177,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           inputField(
-                              "Enter Email",
+                              "Enter new Password",
                               Icon(
                                 Icons.email,
                                 color: Color(0xffFF5018),
@@ -173,11 +192,11 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                                       color: Colors.white,
                                     )
                                   : Text(
-                                      "Reset password",
+                                      "Password Update",
                                       style: TextStyle(fontSize: 18),
                                     ),
                               onPressed: () {
-                                submit();
+                                updatePassword()();
                               },
                               color: Color(0xffFF5018),
                               textColor: Colors.white,
@@ -211,13 +230,16 @@ class _ForgetPasswordState extends State<ForgetPassword> {
       child: TextFormField(
         onChanged: (value) {
           setState(() {
-            email = value;
+            password = value;
           });
         },
-        validator: MultiValidator([
-          EmailValidator(errorText: "enter a valid email address"),
-          RequiredValidator(errorText: "Required")
-        ]),
+        validator: (value) {
+          if (value == null) {
+            return "Required";
+          } else if (value.length < 6) {
+            return "Password must be atleast 6 char";
+          }
+        },
         decoration: new InputDecoration(
           contentPadding: EdgeInsets.symmetric(vertical: 30),
           hintText: name,
@@ -261,7 +283,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
     // );
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
-      title: Text("Wrong Email Address"),
+      title: Text("Try Again"),
       content: Text(
         error,
         // style: TextStyle(fontSize: 18,fontFamily: Variable.fontStyle),
