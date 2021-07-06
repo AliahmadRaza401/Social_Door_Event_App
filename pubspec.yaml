@@ -42,6 +42,7 @@ dependencies:
   provider: ^5.0.0
   form_field_validator: ^1.1.0
   http: ^0.13.3
+  google_sign_in: ^5.0.4
 
 
 dev_dependencies:

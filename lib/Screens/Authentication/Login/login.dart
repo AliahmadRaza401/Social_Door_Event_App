@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:form_field_validator/form_field_validator.dart';
+import 'package:social_door/Api/google__api.dart';
 import 'package:social_door/Screens/Authentication/Signup/signUp.dart';
 import 'package:social_door/Screens/Authentication/forget%20password/forgetPassword.dart';
 import 'package:social_door/Screens/Home/home.dart';
@@ -68,6 +69,19 @@ class _LoginState extends State<Login> {
         });
         showAlertDialog(context, error);
       }
+    }
+  }
+//Goole Sigin
+
+  Future googleSignIn() async {
+    print("Google SignIn---------------------");
+    final user = await GoogleApi.login();
+
+    if (user == null) {
+      showAlertDialog(context, "SignIn Failed");
+    } else {
+      Navigator.of(context)
+          .push(MaterialPageRoute(builder: (context) => Home()));
     }
   }
 
@@ -247,16 +261,19 @@ class _LoginState extends State<Login> {
                           ),
                           Column(
                             children: [
-                              Container(
-                                width: 45,
-                                height: 45,
-                                padding: EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                    color: Color(0xff80808E),
-                                    borderRadius: BorderRadius.circular(50)),
-                                child: SvgPicture.asset(
-                                  "assets/svg/google.svg",
-                                  color: Colors.white,
+                              GestureDetector(
+                                onTap: googleSignIn,
+                                child: Container(
+                                  width: 45,
+                                  height: 45,
+                                  padding: EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                      color: Color(0xff80808E),
+                                      borderRadius: BorderRadius.circular(50)),
+                                  child: SvgPicture.asset(
+                                    "assets/svg/google.svg",
+                                    color: Colors.white,
+                                  ),
                                 ),
                               ),
                             ],
