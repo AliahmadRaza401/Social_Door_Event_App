@@ -4,10 +4,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:form_field_validator/form_field_validator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:social_door/Api/google__api.dart';
 import 'package:social_door/Screens/Authentication/Signup/signUp.dart';
 import 'package:social_door/Screens/Authentication/forget%20password/forgetPassword.dart';
 import 'package:social_door/Screens/Home/home.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -22,6 +24,29 @@ class _LoginState extends State<Login> {
 
   final _formKey = GlobalKey<FormState>();
   var token;
+  var _userObj;
+
+  @override
+  void initState() {
+    super.initState();
+    check_already_LogIn();
+  }
+
+  check_already_LogIn() async {
+    final userData = await SharedPreferences.getInstance();
+    bool newUser = (userData.getBool('userLogin') ?? false);
+
+    print("New User_______: ${newUser}");
+    if (newUser == true) {
+      Navigator.of(context)
+          .push(MaterialPageRoute(builder: (context) => Home()));
+    }
+  }
+
+  userLoginTrue() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('userLogin', true);
+  }
 
   void submit() async {
     if (_formKey.currentState!.validate()) {}
@@ -55,6 +80,7 @@ class _LoginState extends State<Login> {
       });
       Navigator.of(context)
           .push(MaterialPageRoute(builder: (context) => Home()));
+      userLoginTrue();
     } else {
       if (data['password'] != null) {
         debugPrint('passwrod ${data['password']}');
@@ -80,9 +106,34 @@ class _LoginState extends State<Login> {
     if (user == null) {
       showAlertDialog(context, "SignIn Failed");
     } else {
+      userLoginTrue();
       Navigator.of(context)
           .push(MaterialPageRoute(builder: (context) => Home()));
     }
+  }
+
+// Fb SignIn
+  Future fbSignIn() async {
+    print("Fb SignIn---------------------");
+    final user = await FacebookAuth.instance
+        .login(permissions: ["public_profile", "email"]).then((value) {
+      FacebookAuth.instance.getUserData().then((userData) {
+        setState(() {
+          _userObj = userData;
+        });
+        userLoginTrue();
+
+        Navigator.of(context)
+            .push(MaterialPageRoute(builder: (context) => Home()));
+      });
+    });
+
+    // if (user == null) {
+    //   showAlertDialog(context, "SignIn Failed");
+    // } else {
+    //   Navigator.of(context)
+    //       .push(MaterialPageRoute(builder: (context) => Home()));
+    // }
   }
 
   @override
@@ -242,19 +293,22 @@ class _LoginState extends State<Login> {
                         children: [
                           Column(
                             children: [
-                              Container(
-                                width: 45,
-                                height: 45,
-                                margin: EdgeInsets.only(
-                                  right: 20,
-                                ),
-                                padding: EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                    color: Color(0xff80808E),
-                                    borderRadius: BorderRadius.circular(50)),
-                                child: SvgPicture.asset(
-                                  "assets/svg/fb.svg",
-                                  color: Colors.white,
+                              GestureDetector(
+                                onTap: fbSignIn,
+                                child: Container(
+                                  width: 45,
+                                  height: 45,
+                                  margin: EdgeInsets.only(
+                                    right: 20,
+                                  ),
+                                  padding: EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                      color: Color(0xff80808E),
+                                      borderRadius: BorderRadius.circular(50)),
+                                  child: SvgPicture.asset(
+                                    "assets/svg/fb.svg",
+                                    color: Colors.white,
+                                  ),
                                 ),
                               ),
                             ],

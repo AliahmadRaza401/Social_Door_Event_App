@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:social_door/Api/google__api.dart';
+import 'package:social_door/Screens/Authentication/Login/login.dart';
 
 class Home extends StatelessWidget {
+  userLoginFalse() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('userLogin', false);
+  }
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -20,7 +27,19 @@ class Home extends StatelessWidget {
         // ],
       ),
       body: new Center(
-        child: new Text('This is the Home page'),
+        child: Container(
+          child: Column(
+            children: [
+              ElevatedButton(
+                  onPressed: () {
+                    userLoginFalse();
+                    Navigator.of(context)
+                        .push(MaterialPageRoute(builder: (context) => Login()));
+                  },
+                  child: Text("Log Out"))
+            ],
+          ),
+        ),
       ),
     );
   }
