@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:http/http.dart' as http;
+import 'package:social_door/Api/api.dart';
 import 'package:social_door/Screens/Authentication/forget%20password/verifyEmailToken.dart';
 
 class ForgetPassword extends StatefulWidget {
@@ -34,7 +35,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
 
   resetPassword() async {
     final response = await http.post(
-      Uri.parse('https://socialeventdoor.herokuapp.com/api/user/recover'),
+      Uri.parse(Api().reset_password),
       headers: {
         'Content-Type': 'application/json',
       },

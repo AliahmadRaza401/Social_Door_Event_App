@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:http/http.dart' as http;
+import 'package:social_door/Api/api.dart';
 import 'package:social_door/Screens/Authentication/Login/login.dart';
 import 'package:social_door/Screens/Authentication/forget%20password/verifyEmailToken.dart';
 import 'package:social_door/Screens/Home/home.dart';
@@ -41,8 +42,9 @@ class _UpdatePasswordState extends State<UpdatePassword> {
 
   resetPassword() async {
     final response = await http.post(
-      Uri.parse(
-          'https://socialeventdoor.herokuapp.com/api/user/reset/$verifyToken'),
+      Uri.parse(Api().updatePassword(verifyToken)
+          // 'https://socialeventdoor.herokuapp.com/api/user/reset/$verifyToken'
+          ),
       headers: {
         'Content-Type': 'application/json',
       },

@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:social_door/Api/api.dart';
 import 'package:social_door/Api/google__api.dart';
 import 'package:social_door/Screens/Authentication/Signup/signUp.dart';
 import 'package:social_door/Screens/Authentication/forget%20password/forgetPassword.dart';
@@ -65,7 +66,7 @@ class _LoginState extends State<Login> {
 
   login() async {
     final response = await http.post(
-      Uri.parse('https://socialeventdoor.herokuapp.com/api/user/login'),
+      Uri.parse(Api().login),
       headers: {
         'Content-Type': 'application/json',
       },

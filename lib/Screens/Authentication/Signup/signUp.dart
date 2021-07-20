@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:form_field_validator/form_field_validator.dart';
+import 'package:social_door/Api/api.dart';
 import 'package:social_door/Screens/Authentication/Login/login.dart';
 
 class SignUp extends StatefulWidget {
@@ -52,7 +53,7 @@ class _SignUpState extends State<SignUp> {
 
   signIn() async {
     final response = await http.post(
-      Uri.parse('https://socialeventdoor.herokuapp.com/api/user/register'),
+      Uri.parse(Api().register),
       headers: {
         'Content-Type': 'application/json',
       },

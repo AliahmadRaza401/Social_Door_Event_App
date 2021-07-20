@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:otp_text_field/otp_field.dart';
 import 'package:otp_text_field/style.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:social_door/Api/api.dart';
 import 'package:social_door/Screens/Authentication/Update%20Password/updatePassword.dart';
 
 class VerifyPhonenumber extends StatefulWidget {
@@ -39,8 +40,9 @@ class _VerifyPhonenumberState extends State<VerifyPhonenumber> {
   tokenConfirm() async {
     loading = true;
     final response = await http.get(
-      Uri.parse(
-          'https://socialeventdoor.herokuapp.com/api/user/reset/$currentText'),
+      Uri.parse(Api().codeConfirmation(currentText)
+          // 'https://socialeventdoor.herokuapp.com/api/user/reset/$currentText'
+          ),
     );
     var data = jsonDecode(response.body);
     print(data);
