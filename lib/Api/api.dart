@@ -15,4 +15,10 @@ class Api {
   codeConfirmation(var currentText) {
     return 'https://socialeventdoor.herokuapp.com/api/user/reset/$currentText';
   }
+
+  String loginGoogle =
+      "https://socialeventdoor.herokuapp.com/api/user/socialLoginWithGoogle";
+
+  String loginFacebook =
+      "https://socialeventdoor.herokuapp.com/api/user/socialLoginWithFacebook";
 }
