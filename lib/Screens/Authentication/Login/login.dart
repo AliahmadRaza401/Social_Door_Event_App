@@ -116,23 +116,29 @@ class _LoginState extends State<Login> {
     print(firstName);
     print(lastName);
     print(user.email);
+    print(user.photoUrl);
 
-    var result = await SocialLogin(
-            email: user.email,
-            firstName: firstName,
-            lastName: lastName,
-            id: user.id,
-            profileUrl: user.id)
-        .loginWithFacebook();
+    try {
+      var result = await SocialLogin().loginWithFacebook(
+        firstName,
+        lastName,
+        user.email,
+        user.photoUrl,
+        user.id,
+      );
 
-    if (result['success'] == true && result['emailSuccess'] == true) {
-      print("Login Success");
-      Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => Home()));
-      userLoginTrue();
-    } else {
-      print("Login UnSuccess");
-      socialAlertDialog(context, SignUp());
+      if (result['emailSuccess'] == true) {
+        print("Login Success");
+        Navigator.of(context)
+            .push(MaterialPageRoute(builder: (context) => Home()));
+        userLoginTrue();
+      } else {
+        print("Login UnSuccess");
+        socialAlertDialog(context, SignUp());
+      }
+    } catch (e) {
+      print("Error");
+      showAlertDialog(context, e);
     }
 
     // if (user == null) {
@@ -166,13 +172,13 @@ class _LoginState extends State<Login> {
       print("--------------------------");
       print(profile.toString());
 
-      var result = await SocialLogin(
-              email: profile['email'],
-              firstName: profile['first_name'],
-              lastName: profile['last_name'],
-              id: profile['id'],
-              profileUrl: _userObj['picture']['data']['url'])
-          .loginWithFacebook();
+      var result = await SocialLogin().loginWithFacebook(
+        profile['first_name'],
+        profile['last_name'],
+        profile['email'],
+        _userObj['picture']['data']['url'],
+        profile['id'],
+      );
       print(result);
 
       if (result['success'] == true && result['emailSuccess'] == true) {
@@ -189,7 +195,6 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
-    // errorMsg = Provider.of<AuthProvider>(context).error;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Container(

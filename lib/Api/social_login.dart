@@ -5,20 +5,26 @@ import 'package:social_door/Api/api.dart';
 import 'package:social_door/Screens/Home/home.dart';
 
 class SocialLogin {
-  String firstName;
-  String lastName;
-  String email;
-  String profileUrl;
-  String id;
+  // var firstName;
+  // var lastName;
+  // var email;
+  // var profileUrl;
+  // var id;
 
-  SocialLogin(
-      {required this.email,
-      required this.firstName,
-      required this.lastName,
-      required this.id,
-      required this.profileUrl});
+  // SocialLogin(
+  //     {required this.email,
+  //     required this.firstName,
+  //     required this.lastName,
+  //     required this.id,
+  //     required this.profileUrl});
 // Login With Facebook
-  Future loginWithFacebook() async {
+  Future loginWithFacebook(
+     var firstName,
+  var lastName,
+  var email,
+  var profileUrl,
+  var id,
+  ) async {
     final response = await http.post(
       Uri.parse(Api().loginFacebook),
       headers: {
@@ -37,7 +43,13 @@ class SocialLogin {
   }
 
   // Login With Google
-  Future loginWithGoogle() async {
+  Future loginWithGoogle(
+     var firstName,
+  var lastName,
+  var email,
+  var profileUrl,
+  var id,
+  ) async {
     final response = await http.post(
       Uri.parse(Api().loginGoogle),
       headers: {
