@@ -1,6 +1,6 @@
 import 'dart:convert';
-import 'package:flutter_facebook_login/flutter_facebook_login.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+// import 'package:flutter_facebook_login/flutter_facebook_login.dart';
+// import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +14,7 @@ import 'package:social_door/Screens/Authentication/Signup/signUp.dart';
 import 'package:social_door/Screens/Authentication/forget%20password/forgetPassword.dart';
 import 'package:social_door/Screens/Home/home.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:social_door/Utils/loader.dart';
 import 'package:social_door/Utils/socialAlertDialog.dart';
 
 class Login extends StatefulWidget {
@@ -26,7 +27,7 @@ class _LoginState extends State<Login> {
   var password;
   var error;
   bool loading = false;
-
+  bool _socialLoading = false;
   final _formKey = GlobalKey<FormState>();
   var token;
   var _userObj;
@@ -107,7 +108,9 @@ class _LoginState extends State<Login> {
   Future googleSignIn() async {
     print("Google SignIn---------------------");
     final user = await GoogleApi.login();
-
+    setState(() {
+      _socialLoading = true;
+    });
     //Fetch Data
     final names = user!.displayName!.split(' ');
     final firstName = names[0];
@@ -132,13 +135,20 @@ class _LoginState extends State<Login> {
         Navigator.of(context)
             .push(MaterialPageRoute(builder: (context) => Home()));
         userLoginTrue();
+        setState(() {
+          _socialLoading = false;
+        });
       } else {
         print("Login UnSuccess");
         socialAlertDialog(context, SignUp());
+        setState(() {
+          _socialLoading = false;
+        });
       }
     } catch (e) {
       print("Error");
       showAlertDialog(context, e);
+      _socialLoading = false;
     }
 
     // if (user == null) {
@@ -158,6 +168,7 @@ class _LoginState extends State<Login> {
       FacebookAuth.instance.getUserData().then((userData) {
         setState(() {
           _userObj = userData;
+          _socialLoading = true;
         });
         userLoginTrue();
         var decodeData = _userObj.toString();
@@ -186,9 +197,15 @@ class _LoginState extends State<Login> {
         Navigator.of(context)
             .push(MaterialPageRoute(builder: (context) => Home()));
         userLoginTrue();
+        setState(() {
+          _socialLoading = false;
+        });
       } else {
         print("Login UnSuccess");
         socialAlertDialog(context, SignUp());
+        setState(() {
+          _socialLoading = false;
+        });
       }
     });
   }
@@ -197,243 +214,258 @@ class _LoginState extends State<Login> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: Container(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height,
-        color: Color(0xff1A1A36),
-        child: SafeArea(
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+      body: Stack(
+        children: [
+          Container(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height,
+            color: Color(0xff1A1A36),
+            child: SafeArea(
+              child: SingleChildScrollView(
+                child: Column(
                   children: [
-                    Padding(
-                      padding: EdgeInsets.only(top: 30),
-                      child: Image.asset(
-                        "assets/png/logoc.png",
-                        width: 110,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.1,
-                ),
-                Align(
-                    alignment: Alignment.center,
-                    child: Column(
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                        Padding(
+                          padding: EdgeInsets.only(top: 30),
+                          child: Image.asset(
+                            "assets/png/logoc.png",
+                            width: 110,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.05,
+                    ),
+                    Align(
+                        alignment: Alignment.center,
+                        child: Column(
                           children: [
-                            Text(
-                              "Signin",
-                              style: TextStyle(
-                                  fontSize: 28,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "Signin",
+                                  style: TextStyle(
+                                      fontSize: 28,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            // errorMsg == null
+                            //     ? CircularProgressIndicator()
+                            //     : Text(errorMsg),
+                            Container(
+                              width: MediaQuery.of(context).size.width * 0.9,
+                              padding: EdgeInsets.only(bottom: 10),
+                              height: 330,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.5),
+                                    spreadRadius: 5,
+                                    blurRadius: 7,
+                                    offset: Offset(
+                                        0, 3), // changes position of shadow
+                                  ),
+                                ],
+                                image: new DecorationImage(
+                                  fit: BoxFit.fill,
+                                  // colorFilter: new ColorFilter.mode(Colors.grey.withOpacity(1), BlendMode.dstATop),
+                                  image: new AssetImage(
+                                    'assets/png/sigin0.png',
+                                  ),
+                                ),
+                              ),
+                              child: Form(
+                                key: _formKey,
+                                autovalidate: true,
+                                child: SingleChildScrollView(
+                                  child: Column(
+                                    children: [
+                                      SizedBox(
+                                        height: 20,
+                                      ),
+                                      emailField(),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      passwordField(),
+                                      SizedBox(
+                                        height: 30,
+                                      ),
+                                      Container(
+                                        height: 60,
+                                        margin: EdgeInsets.only(bottom: 10),
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.8,
+                                        child: FlatButton(
+                                          child: loading == true
+                                              ? CircularProgressIndicator(
+                                                  color: Colors.white,
+                                                )
+                                              : Text(
+                                                  "Sign In",
+                                                  style:
+                                                      TextStyle(fontSize: 18),
+                                                ),
+                                          onPressed: () {
+                                            submit();
+                                          },
+                                          color: Color(0xffFF5018),
+                                          textColor: Colors.white,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      GestureDetector(
+                                        onTap: () {
+                                          Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      ForgetPassword()));
+                                        },
+                                        child: Text(
+                                          "Forget Password",
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
                             ),
                           ],
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        // errorMsg == null
-                        //     ? CircularProgressIndicator()
-                        //     : Text(errorMsg),
-                        Container(
-                          width: MediaQuery.of(context).size.width * 0.9,
-                          padding: EdgeInsets.only(bottom: 10),
-                          height: 330,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.5),
-                                spreadRadius: 5,
-                                blurRadius: 7,
-                                offset:
-                                    Offset(0, 3), // changes position of shadow
-                              ),
-                            ],
-                            image: new DecorationImage(
-                              fit: BoxFit.fill,
-                              // colorFilter: new ColorFilter.mode(Colors.grey.withOpacity(1), BlendMode.dstATop),
-                              image: new AssetImage(
-                                'assets/png/sigin0.png',
-                              ),
-                            ),
+                        )),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.05,
+                    ),
+                    Container(
+                      alignment: Alignment.center,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Contact With",
+                            style: TextStyle(color: Colors.white),
                           ),
-                          child: Form(
-                            key: _formKey,
-                            autovalidate: true,
-                            child: SingleChildScrollView(
-                              child: Column(
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Column(
                                 children: [
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                  emailField(),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  passwordField(),
-                                  SizedBox(
-                                    height: 30,
-                                  ),
-                                  Container(
-                                    height: 60,
-                                    margin: EdgeInsets.only(bottom: 10),
-                                    width:
-                                        MediaQuery.of(context).size.width * 0.8,
-                                    child: FlatButton(
-                                      child: loading == true
-                                          ? CircularProgressIndicator(
-                                              color: Colors.white,
-                                            )
-                                          : Text(
-                                              "Sign In",
-                                              style: TextStyle(fontSize: 18),
-                                            ),
-                                      onPressed: () {
-                                        submit();
-                                      },
-                                      color: Color(0xffFF5018),
-                                      textColor: Colors.white,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(20),
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
                                   GestureDetector(
-                                    onTap: () {
-                                      Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  ForgetPassword()));
-                                    },
-                                    child: Text(
-                                      "Forget Password",
-                                      style: TextStyle(color: Colors.white),
+                                    onTap:
+                                        // initiateFacebookLogin,
+                                        fbSignIn,
+                                    child: Container(
+                                      width: 45,
+                                      height: 45,
+                                      margin: EdgeInsets.only(
+                                        right: 20,
+                                      ),
+                                      padding: EdgeInsets.all(10),
+                                      decoration: BoxDecoration(
+                                          color: Color(0xff80808E),
+                                          borderRadius:
+                                              BorderRadius.circular(50)),
+                                      child: SvgPicture.asset(
+                                        "assets/svg/fb.svg",
+                                        color: Colors.white,
+                                      ),
                                     ),
                                   ),
                                 ],
                               ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    )),
-                SizedBox(
-                  height: 70,
-                ),
-                Container(
-                  alignment: Alignment.center,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        "Contact With",
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Column(
-                            children: [
-                              GestureDetector(
-                                onTap:
-                                    // initiateFacebookLogin,
-                                    fbSignIn,
-                                child: Container(
-                                  width: 45,
-                                  height: 45,
-                                  margin: EdgeInsets.only(
-                                    right: 20,
+                              Column(
+                                children: [
+                                  GestureDetector(
+                                    onTap: googleSignIn,
+                                    child: Container(
+                                      width: 45,
+                                      height: 45,
+                                      padding: EdgeInsets.all(10),
+                                      decoration: BoxDecoration(
+                                          color: Color(0xff80808E),
+                                          borderRadius:
+                                              BorderRadius.circular(50)),
+                                      child: SvgPicture.asset(
+                                        "assets/svg/google.svg",
+                                        color: Colors.white,
+                                      ),
+                                    ),
                                   ),
-                                  padding: EdgeInsets.all(10),
-                                  decoration: BoxDecoration(
-                                      color: Color(0xff80808E),
-                                      borderRadius: BorderRadius.circular(50)),
-                                  child: SvgPicture.asset(
-                                    "assets/svg/fb.svg",
-                                    color: Colors.white,
-                                  ),
-                                ),
+                                ],
                               ),
                             ],
                           ),
-                          Column(
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              GestureDetector(
-                                onTap: googleSignIn,
-                                child: Container(
-                                  width: 45,
-                                  height: 45,
-                                  padding: EdgeInsets.all(10),
-                                  decoration: BoxDecoration(
-                                      color: Color(0xff80808E),
-                                      borderRadius: BorderRadius.circular(50)),
-                                  child: SvgPicture.asset(
-                                    "assets/svg/google.svg",
-                                    color: Colors.white,
+                              Column(
+                                children: [
+                                  Text(
+                                    "Don't have an accont ?   ",
+                                    style: TextStyle(color: Colors.white),
                                   ),
-                                ),
+                                ],
+                              ),
+                              Column(
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                              builder: (context) => SignUp()));
+                                    },
+                                    child: Text(
+                                      "Register",
+                                      style: TextStyle(
+                                          color: Color(0xffFF5018),
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
                         ],
                       ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Column(
-                            children: [
-                              Text(
-                                "Don't have an accont ?   ",
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            ],
-                          ),
-                          Column(
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) => SignUp()));
-                                },
-                                child: Text(
-                                  "Register",
-                                  style: TextStyle(
-                                      color: Color(0xffFF5018),
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+                    ),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.05,
+                    ),
+                  ],
                 ),
-                SizedBox(
-                  height: 70,
-                ),
-              ],
+              ),
             ),
           ),
-        ),
+          //Loading Container
+          Container(
+              child: _socialLoading
+                  ? Loader(loadingTxt: 'Please wait Signing...')
+                  : Container())
+        ],
       ),
     );
   }

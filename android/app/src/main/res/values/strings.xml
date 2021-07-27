@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <string name="app_name">Social Door</string>
-  <string name="facebook_app_id">1492043704478861</string>
-  <string name="fb_login_protocol_scheme">fb1365719610250300</string>
+  <string name="app_name">Event App</string>
+  <string name="facebook_app_id">123854773188369</string>
+  <string name="fb_login_protocol_scheme">fb123854773188369</string>
 </resources>
+<!-- fb1365719610250300 -->

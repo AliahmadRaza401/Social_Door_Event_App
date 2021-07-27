@@ -27,3 +27,6 @@ subprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+mavenCentral()
+implementation 'com.facebook.android:facebook-android-sdk:[5,6)'
