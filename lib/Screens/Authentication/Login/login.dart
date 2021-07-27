@@ -14,6 +14,7 @@ import 'package:social_door/Screens/Authentication/Signup/signUp.dart';
 import 'package:social_door/Screens/Authentication/forget%20password/forgetPassword.dart';
 import 'package:social_door/Screens/Home/home.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:social_door/Screens/Main%20Tabbar/tabbar_main.dart';
 import 'package:social_door/Utils/loader.dart';
 import 'package:social_door/Utils/socialAlertDialog.dart';
 
@@ -45,7 +46,7 @@ class _LoginState extends State<Login> {
     print("New User_______: ${newUser}");
     if (newUser == true) {
       Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => Home()));
+          .push(MaterialPageRoute(builder: (context) => TabbarMain()));
     }
   }
 
@@ -85,7 +86,7 @@ class _LoginState extends State<Login> {
         loading = false;
       });
       Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => Home()));
+          .push(MaterialPageRoute(builder: (context) => TabbarMain()));
       userLoginTrue();
     } else {
       if (data['password'] != null) {
@@ -133,7 +134,7 @@ class _LoginState extends State<Login> {
       if (result['emailSuccess'] == true) {
         print("Login Success");
         Navigator.of(context)
-            .push(MaterialPageRoute(builder: (context) => Home()));
+            .push(MaterialPageRoute(builder: (context) => TabbarMain()));
         userLoginTrue();
         setState(() {
           _socialLoading = false;
@@ -195,7 +196,7 @@ class _LoginState extends State<Login> {
       if (result['success'] == true && result['emailSuccess'] == true) {
         print("Login Success");
         Navigator.of(context)
-            .push(MaterialPageRoute(builder: (context) => Home()));
+            .push(MaterialPageRoute(builder: (context) => TabbarMain()));
         userLoginTrue();
         setState(() {
           _socialLoading = false;

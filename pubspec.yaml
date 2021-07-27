@@ -45,6 +45,7 @@ dependencies:
   google_sign_in: ^5.0.4
   flutter_facebook_auth: ^3.0.0
   flutter_facebook_login: ^3.0.0
+  gradient_bottom_navigation_bar: ^1.0.0+4
 
 
 
