@@ -16,9 +16,14 @@ class Api {
     return 'https://socialeventdoor.herokuapp.com/api/user/reset/$currentText';
   }
 
+  // Social Login Api's
   String loginGoogle =
       "https://socialeventdoor.herokuapp.com/api/user/socialLoginWithGoogle";
 
   String loginFacebook =
       "https://socialeventdoor.herokuapp.com/api/user/socialLoginWithFacebook";
+
+  // Home Api's
+  String getAllTags =
+      "https://socialeventdoor.herokuapp.com/api/user/getAllTags";
 }
