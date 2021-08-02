@@ -38,12 +38,8 @@ class _SignUpState extends State<SignUp> {
       setState(() {
         loading = true;
       });
-      try {
-        print("-------------------- Sign Up ---------------");
-        signIn();
-      } catch (e) {
-        print(e);
-      }
+
+      signUp();
     } else {
       _formKey.currentState!.save();
       // _formKey.currentState.save();
@@ -51,62 +47,67 @@ class _SignUpState extends State<SignUp> {
     }
   }
 
-  signIn() async {
-    final response = await http.post(
-      Uri.parse(Api().register),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode({
-        'first_name': first_name,
-        'last_name': last_name,
-        'dob': dob,
-        'gender': gender,
-        'email': email,
-        'password': password,
-        'phone': phone,
-        'password_confirm': password_confirm
-      }),
-    );
-    data = jsonDecode(response.body);
-    print(data);
-    if (data['success'] == true) {
-      debugPrint('SignIn success');
-      setState(() {
-        token = data['token'];
-        error = "SignIn Successfully";
-      });
-      showAlertDialog(context, error);
-    } else if (data['name'] != null) {
-      debugPrint('name ${data['name']}');
-      setState(() {
-        error = '${data['name']}';
-      });
-      showAlertDialog(context, error);
-    } else if (data['phone'] != null) {
-      debugPrint('phone ${data['phone']}');
-      setState(() {
-        error = '${data['phone']}';
-      });
-      showAlertDialog(context, error);
-    } else if (data['email'] != null) {
-      debugPrint('phone ${data['email']}');
-      setState(() {
-        error = '${data['email']}';
-      });
-      showAlertDialog(context, error);
-    } else if (data['password_confirm'] != null) {
-      debugPrint('phone ${data['password_confirm']}');
-      setState(() {
-        error = '${data['password_confirm']}';
-      });
-      showAlertDialog(context, error);
-    } else {
-      debugPrint('email ${data['email']}');
-      setState(() {
-        error = 'Something went Wrong';
-      });
-      showAlertDialog(context, error);
+  signUp() async {
+    print("-------------------- Sign Up ---------------");
+    try {
+      final response = await http.post(
+        Uri.parse(Api().register),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'first_name': first_name,
+          'last_name': last_name,
+          'dob': dob,
+          'gender': gender,
+          'email': email,
+          'password': password,
+          'phone': phone,
+          'password_confirm': password_confirm
+        }),
+      );
+      data = jsonDecode(response.body);
+      print(data);
+      if (data['success'] == true) {
+        debugPrint('SignIn success');
+        setState(() {
+          token = data['token'];
+          error = "SignIn Successfully";
+        });
+        showAlertDialog(context, error);
+      } else if (data['name'] != null) {
+        debugPrint('name ${data['name']}');
+        setState(() {
+          error = '${data['name']}';
+        });
+        showAlertDialog(context, error);
+      } else if (data['phone'] != null) {
+        debugPrint('phone ${data['phone']}');
+        setState(() {
+          error = '${data['phone']}';
+        });
+        showAlertDialog(context, error);
+      } else if (data['email'] != null) {
+        debugPrint('phone ${data['email']}');
+        setState(() {
+          error = '${data['email']}';
+        });
+        showAlertDialog(context, error);
+      } else if (data['password_confirm'] != null) {
+        debugPrint('phone ${data['password_confirm']}');
+        setState(() {
+          error = '${data['password_confirm']}';
+        });
+        showAlertDialog(context, error);
+      } else {
+        debugPrint('email ${data['email']}');
+        setState(() {
+          error = 'Something went Wrong';
+        });
+        showAlertDialog(context, error);
+      }
+    } catch (e) {
+      showAlertDialog(context, "Something went wrong! Please try again");
     }
   }
 

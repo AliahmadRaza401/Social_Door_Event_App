@@ -55,6 +55,10 @@ class _LoginState extends State<Login> {
     await prefs.setBool('userLogin', true);
   }
 
+  // saveBToken(value) async {
+
+  // }
+
   void submit() async {
     if (_formKey.currentState!.validate()) {}
     _formKey.currentState!.save();
@@ -84,9 +88,13 @@ class _LoginState extends State<Login> {
         token = data['token'];
         error = "Login Successfully";
         loading = false;
+        debugPrint("abax ${token.toString()}");
       });
       Navigator.of(context)
           .push(MaterialPageRoute(builder: (context) => TabbarMain()));
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setString('token', token);
+      // saveBToken(token);
       userLoginTrue();
     } else {
       if (data['password'] != null) {

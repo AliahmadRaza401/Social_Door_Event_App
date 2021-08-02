@@ -12,10 +12,26 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  var token;
+
   @override
   userLoginFalse() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setBool('userLogin', false);
+  }
+
+  usertoken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    token = prefs.getString('token');
+    debugPrint("home Token: ${token.toString()}");
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    usertoken();
   }
 
   @override

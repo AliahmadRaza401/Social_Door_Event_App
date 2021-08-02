@@ -12,7 +12,9 @@ Widget HomeTags() {
     child: FutureBuilder(
       future: tags,
       builder: (BuildContext context, AsyncSnapshot snapshot) {
-        if (snapshot.hasData) {
+        if (!snapshot.hasData) {
+          return Center(child: Text("No Tags"));
+        } else if (snapshot.hasData) {
           return SizedBox(
             height: MediaQuery.of(context).size.height * 0.05,
             child: ListView.builder(
@@ -34,7 +36,7 @@ Widget HomeTags() {
                 }),
           );
         } else {
-          return Center(child: CircularProgressIndicator());
+          return Center(child: Text("Tags Loading.."));
         }
       },
     ),
