@@ -4,9 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:social_door/Utils/authException.dart';
 
-class AuthProvider extends ChangeNotifier {
+class DataProvider extends ChangeNotifier {
+  var token;
   var error;
   bool loading = false;
+
+  // saveError(error) {
+  //   error = error;
+  // }
 
   // Login
   Future<void> Login(String email, String password) async {

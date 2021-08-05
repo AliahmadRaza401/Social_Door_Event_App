@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:social_door/Providers/authProvider.dart';
+import 'package:social_door/Providers/dataProvider.dart';
 import 'Screens/Splash/splash.dart';
 
 void main() => runApp(new MyApp());
@@ -13,8 +13,8 @@ class MyApp extends StatelessWidget {
         // ChangeNotifierProvider.value(
         //   value: AuthProvider(),
         // ),
-        ChangeNotifierProvider<AuthProvider>(create: (BuildContext context) {
-          return AuthProvider();
+        ChangeNotifierProvider<DataProvider>(create: (BuildContext context) {
+          return DataProvider();
         }),
       ],
       child: new MaterialApp(

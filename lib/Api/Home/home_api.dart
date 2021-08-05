@@ -2,24 +2,18 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:social_door/Api/api.dart';
+import 'package:social_door/Providers/dataProvider.dart';
 
 class HomeApi {
-  //get Brearear Token
-  // getBToken() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   return prefs.getString('token');
-  // }
-
 // Get all Tags
-  getAllTags() async {
+  getAllTags(BuildContext context) async {
     print("------------ Get All Tags");
-    SharedPreferences prefs =
-        SharedPreferences.getInstance() as SharedPreferences;
-    var token;
-    token = prefs.getString('token');
-    debugPrint("Your Token is : ${token.toString()}");
+    var token = Provider.of<DataProvider>(context).token;
+
+    print("home api Token : $token");
     final responce = await http.post(
       Uri.parse(Api().getAllTags),
       headers: {

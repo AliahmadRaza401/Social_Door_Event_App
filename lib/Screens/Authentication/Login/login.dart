@@ -6,10 +6,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:form_field_validator/form_field_validator.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:social_door/Api/api.dart';
 import 'package:social_door/Api/google__api.dart';
 import 'package:social_door/Api/social_login.dart';
+import 'package:social_door/Providers/dataProvider.dart';
 import 'package:social_door/Screens/Authentication/Signup/signUp.dart';
 import 'package:social_door/Screens/Authentication/forget%20password/forgetPassword.dart';
 import 'package:social_door/Screens/Home/home.dart';
@@ -45,6 +47,10 @@ class _LoginState extends State<Login> {
 
     print("New User_______: ${newUser}");
     if (newUser == true) {
+      // Save Data
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      Provider.of<DataProvider>(context, listen: false).token =
+          prefs.get('token');
       Navigator.of(context)
           .push(MaterialPageRoute(builder: (context) => TabbarMain()));
     }
@@ -84,11 +90,10 @@ class _LoginState extends State<Login> {
     print(data);
     if (data['success'] == true) {
       debugPrint('login success');
+      Provider.of<DataProvider>(context, listen: false).token = data['token'];
       setState(() {
         token = data['token'];
-        error = "Login Successfully";
         loading = false;
-        debugPrint("abax ${token.toString()}");
       });
       Navigator.of(context)
           .push(MaterialPageRoute(builder: (context) => TabbarMain()));
