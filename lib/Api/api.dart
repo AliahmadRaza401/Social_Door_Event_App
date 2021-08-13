@@ -26,4 +26,8 @@ class Api {
   // Home Api's
   String getAllTags =
       "https://socialeventdoor.herokuapp.com/api/user/getAllTags";
+
+  //Event Post
+  String eventCreate =
+      "https://socialeventdoor.herokuapp.com/api/user/events/eventCreationForm";
 }

@@ -7,20 +7,16 @@ import 'package:social_door/Screens/Authentication/Login/login.dart';
 import 'package:social_door/Screens/OnBoarding/onBoarding.dart';
 import 'package:video_player/video_player.dart';
 
-import 'chew_player.dart';
-
-
 class Splash extends StatefulWidget {
   @override
   SplashState createState() => new SplashState();
 }
 
 class SplashState extends State<Splash> with AfterLayoutMixin<Splash> {
-
-  void nextScreen(){
+  void nextScreen() {
     Timer(
       Duration(seconds: 3),
-        checkFirstSeen,
+      checkFirstSeen,
     );
   }
 
@@ -37,31 +33,6 @@ class SplashState extends State<Splash> with AfterLayoutMixin<Splash> {
           new MaterialPageRoute(builder: (context) => new OnBoarding()));
     }
   }
-
-  //Video setup
-  late VideoPlayerController _controller;
-  late Future<void> _initializeVideoPlayerFuture;
-  final Duration initialDelay = Duration(seconds: 5);
-
-
-  @override
-  void initState() {
-    // _controller = VideoPlayerController.asset("video/intro.mp4");
-    _controller = VideoPlayerController.network("https://youtu.be/W9JZ1BPDGkY");
-    _initializeVideoPlayerFuture = _controller.initialize();
-    _controller.setLooping(true);
-    _controller.setVolume(1.0);
-    _controller.play();
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-
 
   @override
   void afterFirstLayout(BuildContext context) => nextScreen();
@@ -93,7 +64,6 @@ class SplashState extends State<Splash> with AfterLayoutMixin<Splash> {
       //     }
       //   },
       // ),
-
     );
   }
 }

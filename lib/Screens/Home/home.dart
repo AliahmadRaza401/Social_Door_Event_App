@@ -6,7 +6,9 @@ import 'package:social_door/Api/google__api.dart';
 import 'package:social_door/Providers/dataProvider.dart';
 import 'package:social_door/Screens/Authentication/Login/login.dart';
 import 'package:social_door/Screens/Home/Home%20Widgets/header_home.dart';
+import 'package:social_door/Screens/Home/Home%20Widgets/postCard.dart';
 import 'package:social_door/Screens/Home/Home%20Widgets/tags_home.dart';
+import 'package:social_door/Screens/Post_Event/eventPostStepper.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -39,19 +41,40 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      body: Container(
-        child: Column(
-          children: [
-            header(context),
-            homeTags(context),
-            ElevatedButton(
-                onPressed: () {
-                  userLoginFalse();
-                  Navigator.of(context)
-                      .push(MaterialPageRoute(builder: (context) => Login()));
-                },
-                child: Text("Log Out"))
-          ],
+      body: SingleChildScrollView(
+        child: Container(
+          child: Column(
+            children: [
+              header(context),
+              homeTags(context),
+              PostCard(),
+              SizedBox(
+                height: 10,
+              ),
+              PostCard(),
+              SizedBox(
+                height: 10,
+              ),
+              PostCard(),
+              SizedBox(
+                height: 10,
+              ),
+              ElevatedButton(
+                  onPressed: () {
+                    userLoginFalse();
+                    Navigator.of(context)
+                        .push(MaterialPageRoute(builder: (context) => Login()));
+                  },
+                  child: Text("Log Out")),
+              ElevatedButton(
+                  onPressed: () {
+                    userLoginFalse();
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => EventPostStepper()));
+                  },
+                  child: Text("Add Event"))
+            ],
+          ),
         ),
       ),
     );

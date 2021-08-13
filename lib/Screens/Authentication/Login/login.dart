@@ -16,7 +16,7 @@ import 'package:social_door/Screens/Authentication/Signup/signUp.dart';
 import 'package:social_door/Screens/Authentication/forget%20password/forgetPassword.dart';
 import 'package:social_door/Screens/Home/home.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
-import 'package:social_door/Screens/Main%20Tabbar/tabbar_main.dart';
+import 'package:social_door/Screens/Main_Tabbar/tabbar_main.dart';
 import 'package:social_door/Utils/loader.dart';
 import 'package:social_door/Utils/socialAlertDialog.dart';
 
