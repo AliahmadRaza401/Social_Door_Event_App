@@ -9,11 +9,10 @@ import 'package:social_door/Providers/dataProvider.dart';
 
 class HomeApi {
 // Get all Tags
-  getAllTags(BuildContext context) async {
+  Future getAllTags(BuildContext context) async {
     print("------------ Get All Tags");
     var token = Provider.of<DataProvider>(context).token;
 
-    print("home api Token : $token");
     final responce = await http.post(
       Uri.parse(Api().getAllTags),
       headers: {
@@ -22,7 +21,7 @@ class HomeApi {
       },
     );
     final data = jsonDecode(responce.body);
-    print(data);
+    // print(data);
     return data;
   }
 }

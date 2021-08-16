@@ -1,14 +1,21 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:social_door/Api/Home/home_api.dart';
+import 'package:social_door/Api/api.dart';
 import 'package:social_door/Api/google__api.dart';
+import 'package:social_door/Api/postEvent.dart';
+import 'package:social_door/Model/createEvent.dart';
+import 'package:social_door/Model/getEvents.dart';
 import 'package:social_door/Providers/dataProvider.dart';
 import 'package:social_door/Screens/Authentication/Login/login.dart';
 import 'package:social_door/Screens/Home/Home%20Widgets/header_home.dart';
 import 'package:social_door/Screens/Home/Home%20Widgets/postCard.dart';
 import 'package:social_door/Screens/Home/Home%20Widgets/tags_home.dart';
 import 'package:social_door/Screens/Post_Event/eventPostStepper.dart';
+import 'package:http/http.dart' as http;
 
 class Home extends StatefulWidget {
   @override
@@ -27,15 +34,15 @@ class _HomeState extends State<Home> {
   usertoken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     token = prefs.getString('token');
-    debugPrint("home Token: ${token.toString()}");
+    print('token: $token');
   }
+
+
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-
-    // usertoken();
+    usertoken();
   }
 
   @override
@@ -47,6 +54,29 @@ class _HomeState extends State<Home> {
             children: [
               header(context),
               homeTags(context),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => EventPostStepper()));
+                },
+                child: Text("create Event"),
+              ),
+              // ListView(
+              //   shrinkWrap: true,
+              //   children: [
+              //     ListView.builder(
+              //       shrinkWrap: true,
+              //       physics: ClampingScrollPhysics(),
+              //       itemCount: eventRule == null ? 0 : eventRule.length,
+              //       itemBuilder: (context, i) {
+              //         return Text(
+              //           eventRule[i].title.toString(),
+              //           style: TextStyle(color: Colors.black),
+              //         );
+              //       },
+              //     ),
+              //   ],
+              // ),
               PostCard(),
               SizedBox(
                 height: 10,
@@ -66,13 +96,6 @@ class _HomeState extends State<Home> {
                         .push(MaterialPageRoute(builder: (context) => Login()));
                   },
                   child: Text("Log Out")),
-              ElevatedButton(
-                  onPressed: () {
-                    userLoginFalse();
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => EventPostStepper()));
-                  },
-                  child: Text("Add Event"))
             ],
           ),
         ),

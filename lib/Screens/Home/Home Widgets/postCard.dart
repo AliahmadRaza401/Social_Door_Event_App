@@ -1,5 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:image_stack/image_stack.dart';
+import 'package:provider/provider.dart';
+import 'package:social_door/Api/api.dart';
+import 'package:social_door/Model/getEvents.dart';
+import 'package:social_door/Providers/dataProvider.dart';
+import 'package:http/http.dart' as http;
 
 class PostCard extends StatefulWidget {
   PostCard({Key? key}) : super(key: key);
@@ -9,6 +16,40 @@ class PostCard extends StatefulWidget {
 }
 
 class _PostCardState extends State<PostCard> {
+  var eventTags;
+  var eventCategory;
+  var events;
+
+  getEvents(BuildContext context) async {
+    print('Get Events Run------------------------------');
+
+    String url = Api().getEvents;
+    var token = Provider.of<DataProvider>(context, listen: false).token;
+    final responce = await http.post(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token,
+      },
+      body: jsonEncode({"cityName": "Lahore"}),
+    );
+
+    if (responce.statusCode == 200) {
+      var data = jsonDecode(responce.body);
+      print('data: $data');
+
+      var getEvents = getEventFromJson(responce.body);
+      events = getEvents.eventsList;
+      print(events[0].category.categoryName);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getEvents(context);
+  }
+
   List<String> images = <String>[
     "https://images.unsplash.com/photo-1458071103673-6a6e4c4a3413?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=750&q=80",
     "https://images.unsplash.com/photo-1518806118471-f28b20a1d79d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=80",
@@ -17,6 +58,25 @@ class _PostCardState extends State<PostCard> {
   ];
   @override
   Widget build(BuildContext context) {
+    return ListView(
+      physics: ClampingScrollPhysics(),
+      shrinkWrap: true,
+      children: [
+        ListView.builder(
+            physics: ClampingScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: events == null ? 0 : events.length,
+            itemBuilder: (context, i) {
+              return eventCard(
+                  events[i].title.toString(),
+                  events[i].category.categoryName.toString(),
+                  events[i].eventCharges.toString());
+            })
+      ],
+    );
+  }
+
+  Widget eventCard(String title, String categoreyName, String rs) {
     return Container(
       height: MediaQuery.of(context).size.height * 0.50,
       width: MediaQuery.of(context).size.width * 0.95,
@@ -93,7 +153,7 @@ class _PostCardState extends State<PostCard> {
                 Row(
                   children: <Widget>[
                     Icon(Icons.party_mode),
-                    _normalText(" Dance Party"),
+                    _normalText(title),
                   ],
                 ),
                 SizedBox(
@@ -102,7 +162,7 @@ class _PostCardState extends State<PostCard> {
                 Row(
                   children: <Widget>[
                     Icon(Icons.music_note),
-                    _normalText(" Music Player"),
+                    _normalText(categoreyName),
                   ],
                 ),
                 SizedBox(
@@ -121,7 +181,9 @@ class _PostCardState extends State<PostCard> {
                 ),
                 Row(
                   children: <Widget>[
-                    _normalText("\$50 each"),
+                    _normalText("\$"),
+                    _normalText(rs),
+                    _normalText(" each"),
                   ],
                 ),
                 SizedBox(

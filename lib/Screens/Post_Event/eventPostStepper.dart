@@ -1,5 +1,12 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:social_door/Api/api.dart';
+import 'package:social_door/Api/postEvent.dart';
+import 'package:social_door/Model/createEvent.dart';
+import 'package:social_door/Providers/dataProvider.dart';
 import 'package:social_door/Screens/Post_Event/stepspage.dart';
+import 'package:http/http.dart' as http;
 
 class EventPostStepper extends StatefulWidget {
   @override
@@ -10,6 +17,43 @@ class _EventPostStepperState extends State<EventPostStepper> {
   int _currentStep = 0;
   bool value = false;
   StepperType stepperType = StepperType.vertical;
+
+  var eventCharges;
+  var eventRule;
+  var eventPrefrence;
+  var eventAmentities;
+  var eventCategory;
+  var eventCancelPolicy;
+
+  createEvent(BuildContext context) async {
+    print('createEvent: Run------------------------------');
+
+    String url = Api().createEvent;
+    var token = Provider.of<DataProvider>(context, listen: false).token;
+    final responce = await http.post(Uri.parse(url), headers: {
+      'Content-Type': 'application/json',
+      'Authorization': token,
+    });
+
+    if (responce.statusCode == 200) {
+      var data = jsonDecode(responce.body);
+      var createEventData = welcomeFromJson(responce.body);
+      eventRule = createEventData.eventCreationData.eventRulesList;
+      eventAmentities = createEventData.eventCreationData.eventAmenitiesList;
+      eventCategory = createEventData.eventCreationData.eventCategoryList;
+      eventCharges = createEventData.eventCreationData.eventChargesList;
+      eventPrefrence = createEventData.eventCreationData.eventPrefrencesList;
+      eventCancelPolicy =
+          createEventData.eventCreationData.eventCancellationPolicyList;
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    createEvent(context);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,21 +109,31 @@ class _EventPostStepperState extends State<EventPostStepper> {
                       ),
                       Step(
                         title: new Text('Amenities'),
-                        content: Column(
+                        content: ListView(
+                          physics: ClampingScrollPhysics(),
+                          shrinkWrap: true,
                           children: [
-                            Row(
-                              children: [
-                                Text("amenities"),
-                                Checkbox(
-                                  value: this.value,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      this.value = value!;
-                                    });
-                                  },
-                                ),
-                              ],
-                            ),
+                            ListView.builder(
+                                shrinkWrap: true,
+                                physics: ClampingScrollPhysics(),
+                                itemCount: eventAmentities == null
+                                    ? 0
+                                    : eventAmentities.length,
+                                itemBuilder: (context, i) {
+                                  return Row(
+                                    children: [
+                                      Text(eventAmentities[i].title),
+                                      Checkbox(
+                                        value: this.value,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            this.value = value!;
+                                          });
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                })
                           ],
                         ),
                         isActive: _currentStep >= 0,
@@ -89,47 +143,31 @@ class _EventPostStepperState extends State<EventPostStepper> {
                       ),
                       Step(
                         title: new Text('Prefrences '),
-                        content: Column(
+                        content: ListView(
+                          physics: ClampingScrollPhysics(),
+                          shrinkWrap: true,
                           children: [
-                            Row(
-                              children: [
-                                Text("prefrences 1"),
-                                Checkbox(
-                                  value: this.value,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      this.value = value!;
-                                    });
-                                  },
-                                ),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                Text("prefrences 2"),
-                                Checkbox(
-                                  value: this.value,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      this.value = value!;
-                                    });
-                                  },
-                                ),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                Text("prefrences 2"),
-                                Checkbox(
-                                  value: this.value,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      this.value = value!;
-                                    });
-                                  },
-                                ),
-                              ],
-                            ),
+                            ListView.builder(
+                                shrinkWrap: true,
+                                physics: ClampingScrollPhysics(),
+                                itemCount: eventAmentities == null
+                                    ? 0
+                                    : eventAmentities.length,
+                                itemBuilder: (context, i) {
+                                  return Row(
+                                    children: [
+                                      Text(eventPrefrence[i].prefrenceValue),
+                                      Checkbox(
+                                        value: this.value,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            this.value = value!;
+                                          });
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                })
                           ],
                         ),
                         isActive: _currentStep >= 0,
@@ -139,34 +177,40 @@ class _EventPostStepperState extends State<EventPostStepper> {
                       ),
                       Step(
                         title: new Text('Rule '),
-                        content: Column(
+                        content: ListView(
+                          physics: ClampingScrollPhysics(),
+                          shrinkWrap: true,
                           children: [
-                            Row(
-                              children: [
-                                Text("rule 1"),
-                                Checkbox(
-                                  value: this.value,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      this.value = value!;
-                                    });
-                                  },
-                                ),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                Text("rule 2"),
-                                Checkbox(
-                                  value: this.value,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      this.value = value!;
-                                    });
-                                  },
-                                ),
-                              ],
-                            ),
+                            ListView.builder(
+                                shrinkWrap: true,
+                                physics: ClampingScrollPhysics(),
+                                itemCount: eventAmentities == null
+                                    ? 0
+                                    : eventAmentities.length,
+                                itemBuilder: (context, i) {
+                                  return Column(
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Text(eventRule[i].title),
+                                          Checkbox(
+                                            value: this.value,
+                                            onChanged: (value) {
+                                              setState(() {
+                                                this.value = value!;
+                                              });
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        children: [
+                                          Text(eventRule[i].description)
+                                        ],
+                                      ),
+                                    ],
+                                  );
+                                })
                           ],
                         ),
                         isActive: _currentStep >= 0,
@@ -176,7 +220,42 @@ class _EventPostStepperState extends State<EventPostStepper> {
                       ),
                       Step(
                         title: new Text('Cancel Policy'),
-                        content: fivePage(context),
+                        content: ListView(
+                          physics: ClampingScrollPhysics(),
+                          shrinkWrap: true,
+                          children: [
+                            ListView.builder(
+                                shrinkWrap: true,
+                                physics: ClampingScrollPhysics(),
+                                itemCount: eventAmentities == null
+                                    ? 0
+                                    : eventAmentities.length,
+                                itemBuilder: (context, i) {
+                                  return Column(
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Text(eventCancelPolicy[i].title),
+                                          Checkbox(
+                                            value: this.value,
+                                            onChanged: (value) {
+                                              setState(() {
+                                                this.value = value!;
+                                              });
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        children: [
+                                          Text(eventCancelPolicy[i].description)
+                                        ],
+                                      ),
+                                    ],
+                                  );
+                                })
+                          ],
+                        ),
                         isActive: _currentStep >= 0,
                         state: _currentStep >= 4
                             ? StepState.complete

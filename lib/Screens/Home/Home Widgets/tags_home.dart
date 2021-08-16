@@ -5,11 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:social_door/Api/Home/home_api.dart';
 import 'package:social_door/Screens/OnBoarding/content.dart';
 
-
 Widget homeTags(context) {
   var tags = HomeApi().getAllTags(context);
   return Container(
-    margin: EdgeInsets.symmetric(vertical: 10),
+    margin: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
     alignment: Alignment.centerLeft,
     child: FutureBuilder(
       future: tags,
