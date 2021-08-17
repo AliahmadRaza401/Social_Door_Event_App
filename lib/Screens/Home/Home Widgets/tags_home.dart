@@ -5,10 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:social_door/Api/Home/home_api.dart';
 import 'package:social_door/Screens/OnBoarding/content.dart';
 
+
 Widget homeTags(context) {
   var tags = HomeApi().getAllTags(context);
   return Container(
-    margin: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+    margin: EdgeInsets.symmetric(
+      vertical: 5,
+    ),
     alignment: Alignment.centerLeft,
     child: FutureBuilder(
       future: tags,
@@ -20,12 +23,19 @@ Widget homeTags(context) {
             height: MediaQuery.of(context).size.height * 0.05,
             child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                padding: EdgeInsets.all(8),
+                padding: EdgeInsets.symmetric(
+                    horizontal: MediaQuery.of(context).size.width * .01,
+                    vertical: MediaQuery.of(context).size.height * .01),
                 itemCount: snapshot.data.length,
                 itemBuilder: (BuildContext context, int index) {
                   return Container(
+                    margin: EdgeInsets.symmetric(
+                        horizontal: MediaQuery.of(context).size.width * .01),
                     height: 10,
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: MediaQuery.of(context).size.height * .01,
+                      vertical: MediaQuery.of(context).size.width * .01,
+                    ),
                     decoration: BoxDecoration(
                       border: Border.all(width: 1.0, color: Colors.red),
                       borderRadius: BorderRadius.all(Radius.circular(

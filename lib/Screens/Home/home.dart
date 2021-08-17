@@ -37,8 +37,6 @@ class _HomeState extends State<Home> {
     print('token: $token');
   }
 
-
-
   @override
   void initState() {
     super.initState();
@@ -54,40 +52,13 @@ class _HomeState extends State<Home> {
             children: [
               header(context),
               homeTags(context),
+              PostCard(),
               ElevatedButton(
                 onPressed: () {
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => EventPostStepper()));
                 },
                 child: Text("create Event"),
-              ),
-              // ListView(
-              //   shrinkWrap: true,
-              //   children: [
-              //     ListView.builder(
-              //       shrinkWrap: true,
-              //       physics: ClampingScrollPhysics(),
-              //       itemCount: eventRule == null ? 0 : eventRule.length,
-              //       itemBuilder: (context, i) {
-              //         return Text(
-              //           eventRule[i].title.toString(),
-              //           style: TextStyle(color: Colors.black),
-              //         );
-              //       },
-              //     ),
-              //   ],
-              // ),
-              PostCard(),
-              SizedBox(
-                height: 10,
-              ),
-              PostCard(),
-              SizedBox(
-                height: 10,
-              ),
-              PostCard(),
-              SizedBox(
-                height: 10,
               ),
               ElevatedButton(
                   onPressed: () {

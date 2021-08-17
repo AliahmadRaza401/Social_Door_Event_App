@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:image_stack/image_stack.dart';
 import 'package:provider/provider.dart';
+import 'package:social_door/Api/Home/home_api.dart';
 import 'package:social_door/Api/api.dart';
 import 'package:social_door/Model/getEvents.dart';
 import 'package:social_door/Providers/dataProvider.dart';
@@ -47,6 +48,9 @@ class _PostCardState extends State<PostCard> {
   @override
   void initState() {
     super.initState();
+
+    // var getEvents = HomeApi().getEvents(context);
+    // events = getEvents.eventsList;
     getEvents(context);
   }
 
@@ -58,7 +62,32 @@ class _PostCardState extends State<PostCard> {
   ];
   @override
   Widget build(BuildContext context) {
-    return ListView(
+    return
+        //  FutureBuilder(
+        //     future: events,
+        //     builder: (BuildContext context, AsyncSnapshot snapshot) {
+        //       if (!snapshot.data) {
+        //         return Text("No Data");
+        //       } else {
+        //         return ListView(
+        //           physics: ClampingScrollPhysics(),
+        //           shrinkWrap: true,
+        //           children: [
+        //             ListView.builder(
+        //                 physics: ClampingScrollPhysics(),
+        //                 shrinkWrap: true,
+        //                 itemCount: events == null ? 0 : events.length,
+        //                 itemBuilder: (context, i) {
+        //                   return eventCard(
+        //                       events[i].title.toString(),
+        //                       events[i].category.categoryName.toString(),
+        //                       events[i].eventCharges.toString());
+        //                 })
+        //           ],
+        //         );
+        //       }
+        //     });
+        ListView(
       physics: ClampingScrollPhysics(),
       shrinkWrap: true,
       children: [
@@ -78,8 +107,8 @@ class _PostCardState extends State<PostCard> {
 
   Widget eventCard(String title, String categoreyName, String rs) {
     return Container(
-      height: MediaQuery.of(context).size.height * 0.50,
-      width: MediaQuery.of(context).size.width * 0.95,
+      height: MediaQuery.of(context).size.height * 0.45,
+      width: MediaQuery.of(context).size.width * 0.9,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
         color: Colors.white,
@@ -104,12 +133,12 @@ class _PostCardState extends State<PostCard> {
                   ),
                   child: Text("")),
               Positioned(
-                top: 200.0,
+                top: MediaQuery.of(context).size.height * 0.23,
                 left: 40.0,
 
                 // right: 10.0,
                 child: Container(
-                    height: MediaQuery.of(context).size.height * 0.050,
+                    height: MediaQuery.of(context).size.height * 0.07,
                     width: MediaQuery.of(context).size.width * 0.08,
                     decoration: BoxDecoration(
                         color: Colors.white,
@@ -140,11 +169,8 @@ class _PostCardState extends State<PostCard> {
               ),
             ],
           ),
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.1,
-          ),
           Positioned(
-            top: 260.0,
+            top: MediaQuery.of(context).size.height * 0.28,
             left: 40.0,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
