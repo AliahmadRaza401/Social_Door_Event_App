@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gradient_bottom_navigation_bar/gradient_bottom_navigation_bar.dart';
 import 'package:social_door/Screens/Home/home.dart';
+import 'package:social_door/Screens/Menu/menu.dart';
 
 class TabbarMain extends StatefulWidget {
   TabbarMain({Key? key}) : super(key: key);
@@ -17,7 +18,7 @@ class _TabbarMainState extends State<TabbarMain> {
     Text('Index 1: Saved'),
     Text('Index 2: Events'),
     Text('Index 3: Profile'),
-    Text('Index 4: Menu'),
+    Menu(),
     Text('Dont remove this is the just use for fill length'),
   ];
 

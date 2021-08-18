@@ -13,7 +13,6 @@ class HomeApi {
   Future getAllTags(BuildContext context) async {
     print("------------ Get All Tags");
     var token = Provider.of<DataProvider>(context).token;
-
     final responce = await http.post(
       Uri.parse(Api().getAllTags),
       headers: {

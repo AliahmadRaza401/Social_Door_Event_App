@@ -63,10 +63,10 @@ class _PostCardState extends State<PostCard> {
   @override
   Widget build(BuildContext context) {
     return
-        //  FutureBuilder(
+        // FutureBuilder<List>(
         //     future: events,
         //     builder: (BuildContext context, AsyncSnapshot snapshot) {
-        //       if (!snapshot.data) {
+        //       if (snapshot.data == null) {
         //         return Text("No Data");
         //       } else {
         //         return ListView(

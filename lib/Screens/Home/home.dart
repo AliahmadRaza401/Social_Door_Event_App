@@ -9,6 +9,7 @@ import 'package:social_door/Api/google__api.dart';
 import 'package:social_door/Api/postEvent.dart';
 import 'package:social_door/Model/createEvent.dart';
 import 'package:social_door/Model/getEvents.dart';
+import 'package:social_door/Payment/paypalPayment.dart';
 import 'package:social_door/Providers/dataProvider.dart';
 import 'package:social_door/Screens/Authentication/Login/login.dart';
 import 'package:social_door/Screens/Home/Home%20Widgets/header_home.dart';
@@ -25,11 +26,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   var token;
 
-  @override
-  userLoginFalse() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('userLogin', false);
-  }
+ 
 
   usertoken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -53,20 +50,7 @@ class _HomeState extends State<Home> {
               header(context),
               homeTags(context),
               PostCard(),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => EventPostStepper()));
-                },
-                child: Text("create Event"),
-              ),
-              ElevatedButton(
-                  onPressed: () {
-                    userLoginFalse();
-                    Navigator.of(context)
-                        .push(MaterialPageRoute(builder: (context) => Login()));
-                  },
-                  child: Text("Log Out")),
+              
             ],
           ),
         ),
