@@ -1,2 +1,2 @@
 
-const BASE_URL='https://socialeventdoor.herokuapp.com/api';
+const BASE_URL='https://socialeventdoor.herokuapp.com';

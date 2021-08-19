@@ -278,10 +278,18 @@ class _EventPostStepperState extends State<EventPostStepper> {
                             : StepState.disabled,
                       ),
                       Step(
-                        title: new Text('Acoount Detail'),
+                        title: new Text('Contact Detail'),
                         content: eightPage(context),
                         isActive: _currentStep >= 0,
                         state: _currentStep >= 7
+                            ? StepState.complete
+                            : StepState.disabled,
+                      ),
+                      Step(
+                        title: new Text('Descripton'),
+                        content: ninePage(context),
+                        isActive: _currentStep >= 0,
+                        state: _currentStep >= 8
                             ? StepState.complete
                             : StepState.disabled,
                       ),
@@ -311,7 +319,7 @@ class _EventPostStepperState extends State<EventPostStepper> {
   }
 
   continued() {
-    _currentStep < 7 ? setState(() => _currentStep += 1) : null;
+    _currentStep < 8 ? setState(() => _currentStep += 1) : null;
   }
 
   cancel() {

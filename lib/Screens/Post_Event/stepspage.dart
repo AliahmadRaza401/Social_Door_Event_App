@@ -9,15 +9,28 @@ Widget firstPage(BuildContext context) {
         SizedBox(
           height: 10,
         ),
-        inputField(context, "Description"),
-        SizedBox(
-          height: 10,
-        ),
         inputField(context, "Categorey"),
         SizedBox(
           height: 10,
         ),
+        inputField(context, "Description"),
+        
+        SizedBox(
+          height: 10,
+        ),
         inputField(context, "Volumn Number"),
+         SizedBox(
+          height: 10,
+        ),
+        inputField(context, "Host"),
+        SizedBox(
+          height: 10,
+        ),
+        inputField(context, "User Instructions"),
+         SizedBox(
+          height: 10,
+        ),
+        inputField(context, "Event Charges"),
       ],
     ),
   );
@@ -93,27 +106,31 @@ Widget sevenPage(BuildContext context) {
   return Container(
     child: Column(
       children: [
+        inputField(context, "Type"),
+         SizedBox(
+          height: 10,
+        ),
+        inputField(context, "Home"),
+         SizedBox(
+          height: 10,
+        ),
+        inputField(context, "Street"),
+        SizedBox(
+          height: 10,
+        ),
+        inputField(context, "Floor"),
+        SizedBox(
+          height: 10,
+        ),
         inputField(context, "City"),
          SizedBox(
           height: 10,
         ),
-        inputField(context, "State"),
+        inputField(context, "Postel Code"),
          SizedBox(
           height: 10,
         ),
-        inputField(context, "Country"),
-        SizedBox(
-          height: 10,
-        ),
-        inputField(context, "Zipcode"),
-        SizedBox(
-          height: 10,
-        ),
-        inputField(context, "Complete Address"),
-         SizedBox(
-          height: 10,
-        ),
-        Text("Fetching Current Location...")
+        Text("Fetching Coordinates...")
 
       ],
     ),
@@ -128,6 +145,17 @@ Widget eightPage(BuildContext context) {
           height: 10,
         ),
         inputField(context, "Phone No"),
+     
+      ],
+    ),
+  );
+}
+
+Widget ninePage(BuildContext context) {
+  return Container(
+    child: Column(
+      children: [
+        inputField(context, "Description"),
      
       ],
     ),

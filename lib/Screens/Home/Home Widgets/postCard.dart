@@ -99,13 +99,14 @@ class _PostCardState extends State<PostCard> {
               return eventCard(
                   events[i].title.toString(),
                   events[i].category.categoryName.toString(),
-                  events[i].eventCharges.toString());
+                  events[i].eventCharges.toString(),
+                  Api().getEventMedia + events[i].eventThumbNail);
             })
       ],
     );
   }
 
-  Widget eventCard(String title, String categoreyName, String rs) {
+  Widget eventCard(String title, String categoreyName, String rs, url) {
     return Container(
       height: MediaQuery.of(context).size.height * 0.45,
       width: MediaQuery.of(context).size.width * 0.9,
@@ -127,8 +128,9 @@ class _PostCardState extends State<PostCard> {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                     image: DecorationImage(
-                      image: AssetImage("assets/png/event.jpg"),
-                      fit: BoxFit.cover,
+                      // image: AssetImage("assets/png/event.jpg"),
+                      image: NetworkImage(url),
+                      fit: BoxFit.fill,
                     ),
                   ),
                   child: Text("")),

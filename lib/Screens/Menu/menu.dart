@@ -12,53 +12,54 @@ class Menu extends StatefulWidget {
 }
 
 class _MenuState extends State<Menu> {
-
-   @override
+  @override
   userLoginFalse() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setBool('userLogin', false);
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Container(
-       child: Column(
-         children: [
-           ElevatedButton(
+      child: SafeArea(
+        child: Column(
+          children: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => EventPostStepper()));
+              },
+              child: Text("create Event"),
+            ),
+            ElevatedButton(
                 onPressed: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => EventPostStepper()));
-                },
-                child: Text("create Event"),
-              ),
-              ElevatedButton(
-                  onPressed: () {
-                    // userLoginFalse();
-                    // Navigator.of(context)
-                    //     .push(MaterialPageRoute(builder: (context) => Login()));
+                  // userLoginFalse();
+                  // Navigator.of(context)
+                  //     .push(MaterialPageRoute(builder: (context) => Login()));
 
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (BuildContext context) => PaypalPayment(
-                          totalAmount: 10,
-                          onFinish: (number) async {
-                            // payment done
-                            print('order id: ' + number);
-                          },
-                        ),
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (BuildContext context) => PaypalPayment(
+                        totalAmount: 10,
+                        onFinish: (number) async {
+                          // payment done
+                          print('order id: ' + number);
+                        },
                       ),
-                    );
-                  },
-                  child: Text("Payment")),
-              ElevatedButton(
-                  onPressed: () {
-                    userLoginFalse();
-                    Navigator.of(context)
-                        .push(MaterialPageRoute(builder: (context) => Login()));
-                  },
-                  child: Text("LogOut")),
-         ],
-       ),
+                    ),
+                  );
+                },
+                child: Text("Payment")),
+            ElevatedButton(
+                onPressed: () {
+                  userLoginFalse();
+                  Navigator.of(context)
+                      .push(MaterialPageRoute(builder: (context) => Login()));
+                },
+                child: Text("LogOut")),
+          ],
+        ),
+      ),
     );
   }
 }
