@@ -48,9 +48,9 @@ class _PostCardState extends State<PostCard> {
   @override
   void initState() {
     super.initState();
+    // events = await DataProvider().getEvents(context);
+    // print('events Privider: $events');
 
-    // var getEvents = HomeApi().getEvents(context);
-    // events = getEvents.eventsList;
     getEvents(context);
   }
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gradient_bottom_navigation_bar/gradient_bottom_navigation_bar.dart';
 import 'package:social_door/Screens/Home/home.dart';
 import 'package:social_door/Screens/Menu/menu.dart';
+import 'package:social_door/Screens/create_Event/createEventStepper.dart';
 
 class TabbarMain extends StatefulWidget {
   TabbarMain({Key? key}) : super(key: key);
@@ -15,7 +16,7 @@ class _TabbarMainState extends State<TabbarMain> {
 
   final _widgetOptions = [
     Home(),
-    Text('Index 1: Saved'),
+    CreateEventStepper(),
     Text('Index 2: Events'),
     Text('Index 3: Profile'),
     Menu(),
@@ -53,12 +54,12 @@ class _TabbarMainState extends State<TabbarMain> {
                 )),
             BottomNavigationBarItem(
                 icon: Icon(
-                  Icons.favorite_outline,
+                  Icons.add_a_photo,
                   size: 30,
                   color: _selectedIndex != 1 ? Color(0xff626275) : null,
                 ),
                 title: Text(
-                  'Saved',
+                  'Create Event',
                   style: TextStyle(
                     color: _selectedIndex != 1 ? Color(0xff626275) : null,
                   ),

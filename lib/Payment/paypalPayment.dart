@@ -17,10 +17,6 @@ class PaypalPayment extends StatefulWidget {
 
 class PaypalPaymentState extends State<PaypalPayment> {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  late String checkoutUrl;
-  late String executeUrl;
-  late String accessToken;
-  PaypalServices services = PaypalServices();
 
   // you can change default currency according to your need
   Map<dynamic, dynamic> defaultCurrency = {
@@ -35,7 +31,10 @@ class PaypalPaymentState extends State<PaypalPayment> {
 
   String returnURL = 'return.example.com';
   String cancelURL = 'cancel.example.com';
-
+  late String checkoutUrl;
+  late String executeUrl;
+  late String accessToken;
+  PaypalServices services = PaypalServices();
   @override
   void initState() {
     super.initState();
@@ -158,45 +157,43 @@ class PaypalPaymentState extends State<PaypalPayment> {
             onTap: () => Navigator.pop(context),
           ),
         ),
-        body: checkoutUrl == null
-            ? CircularProgressIndicator()
-            : WebView(
-                initialUrl: checkoutUrl,
-                javascriptMode: JavascriptMode.unrestricted,
-                navigationDelegate: (NavigationRequest request) {
-                  if (request.url.contains(returnURL)) {
-                    final uri = Uri.parse(request.url);
-                    final payerID = uri.queryParameters['PayerID'];
-                    final data = uri.queryParameters;
-                    print('data: $data');
-                    print("Payer ID: ${payerID}");
+        body: WebView(
+          initialUrl: checkoutUrl,
+          javascriptMode: JavascriptMode.unrestricted,
+          navigationDelegate: (NavigationRequest request) {
+            if (request.url.contains(returnURL)) {
+              final uri = Uri.parse(request.url);
+              final payerID = uri.queryParameters['PayerID'];
+              final data = uri.queryParameters;
+              print('data: $data');
+              print("Payer ID: ${payerID}");
 
-                    if (payerID != null) {
-                      services
-                          .executePayment(executeUrl, payerID, accessToken)
-                          .then((id) {
-                        widget.onFinish(id);
-                        // Navigator.of(context).pop();
-                        print('1');
-                        // Navigator.push(context, MaterialPageRoute(builder: (context)=>OrderStatus()));
-                      });
-                    } else {
-                      // Navigator.of(context).pop();
-                      print('2');
-                      // Navigator.push(context, MaterialPageRoute(builder: (context)=>OrderStatus()));
+              if (payerID != null) {
+                services
+                    .executePayment(executeUrl, payerID, accessToken)
+                    .then((id) {
+                  widget.onFinish(id);
+                  // Navigator.of(context).pop();
+                  print('1');
+                  // Navigator.push(context, MaterialPageRoute(builder: (context)=>OrderStatus()));
+                });
+              } else {
+                // Navigator.of(context).pop();
+                print('2');
+                // Navigator.push(context, MaterialPageRoute(builder: (context)=>OrderStatus()));
 
-                    }
-                    // Navigator.of(context).pop();
-                    print('3');
-                    // Navigator.push(context, MaterialPageRoute(builder: (context)=>OrderStatus()));
+              }
+              // Navigator.of(context).pop();
+              print('3');
+              // Navigator.push(context, MaterialPageRoute(builder: (context)=>OrderStatus()));
 
-                  }
-                  if (request.url.contains(cancelURL)) {
-                    Navigator.of(context).pop();
-                  }
-                  return NavigationDecision.navigate;
-                },
-              ),
+            }
+            if (request.url.contains(cancelURL)) {
+              Navigator.of(context).pop();
+            }
+            return NavigationDecision.navigate;
+          },
+        ),
       );
     } else {
       return Scaffold(

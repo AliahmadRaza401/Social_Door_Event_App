@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:social_door/Providers/dataProvider.dart';
+import 'package:social_door/Providers/multi_provider.dart';
 import 'Screens/Splash/splash.dart';
 
 void main() => runApp(new MyApp());
@@ -9,14 +9,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [
-        // ChangeNotifierProvider.value(
-        //   value: AuthProvider(),
-        // ),
-        ChangeNotifierProvider<DataProvider>(create: (BuildContext context) {
-          return DataProvider();
-        }),
-      ],
+      providers: multiProvider,
       child: new MaterialApp(
         debugShowCheckedModeBanner: false,
         color: Colors.orange,

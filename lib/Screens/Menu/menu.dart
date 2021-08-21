@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:social_door/Payment/paypalPayment.dart';
 import 'package:social_door/Screens/Authentication/Login/login.dart';
-import 'package:social_door/Screens/Post_Event/eventPostStepper.dart';
+
+import 'package:social_door/Screens/create_Event/Image_upload.dart';
+import 'package:social_door/Screens/create_Event/createEventStepper.dart';
 
 class Menu extends StatefulWidget {
   Menu({Key? key}) : super(key: key);
@@ -20,44 +22,53 @@ class _MenuState extends State<Menu> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: SafeArea(
-        child: Column(
-          children: [
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => EventPostStepper()));
-              },
-              child: Text("create Event"),
-            ),
-            ElevatedButton(
+    return Scaffold(
+      body: Container(
+        child: SafeArea(
+          child: Column(
+            children: [
+              ElevatedButton(
                 onPressed: () {
-                  // userLoginFalse();
-                  // Navigator.of(context)
-                  //     .push(MaterialPageRoute(builder: (context) => Login()));
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => CreateEventStepper()));
+                },
+                child: Text("create Event"),
+              ),
+              ElevatedButton(
+                  onPressed: () {
+                    // userLoginFalse();
+                    // Navigator.of(context)
+                    //     .push(MaterialPageRoute(builder: (context) => Login()));
 
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (BuildContext context) => PaypalPayment(
-                        totalAmount: 10,
-                        onFinish: (number) async {
-                          // payment done
-                          print('order id: ' + number);
-                        },
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (BuildContext context) => PaypalPayment(
+                          totalAmount: 10,
+                          onFinish: (number) async {
+                            // payment done
+                            print('order id: ' + number);
+                          },
+                        ),
                       ),
-                    ),
-                  );
-                },
-                child: Text("Payment")),
-            ElevatedButton(
-                onPressed: () {
-                  userLoginFalse();
-                  Navigator.of(context)
-                      .push(MaterialPageRoute(builder: (context) => Login()));
-                },
-                child: Text("LogOut")),
-          ],
+                    );
+                  },
+                  child: Text("Payment")),
+              ElevatedButton(
+                  onPressed: () {
+                    userLoginFalse();
+                    Navigator.of(context)
+                        .push(MaterialPageRoute(builder: (context) => Login()));
+                  },
+                  child: Text("LogOut")),
+              ElevatedButton(
+                  onPressed: () {
+                    userLoginFalse();
+                    Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) => ImageUpload()));
+                  },
+                  child: Text("Image Picker")),
+            ],
+          ),
         ),
       ),
     );

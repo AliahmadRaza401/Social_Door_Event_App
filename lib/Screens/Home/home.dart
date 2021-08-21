@@ -15,7 +15,6 @@ import 'package:social_door/Screens/Authentication/Login/login.dart';
 import 'package:social_door/Screens/Home/Home%20Widgets/header_home.dart';
 import 'package:social_door/Screens/Home/Home%20Widgets/postCard.dart';
 import 'package:social_door/Screens/Home/Home%20Widgets/tags_home.dart';
-import 'package:social_door/Screens/Post_Event/eventPostStepper.dart';
 import 'package:http/http.dart' as http;
 
 class Home extends StatefulWidget {

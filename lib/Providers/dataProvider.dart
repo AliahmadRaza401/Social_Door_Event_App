@@ -2,6 +2,9 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
+import 'package:social_door/Api/api.dart';
+import 'package:social_door/Model/getEvents.dart';
 import 'package:social_door/Utils/authException.dart';
 
 class DataProvider extends ChangeNotifier {
@@ -9,9 +12,32 @@ class DataProvider extends ChangeNotifier {
   var error;
   bool loading = false;
 
-  // saveError(error) {
-  //   error = error;
-  // }
+  Future getEvents(BuildContext context) async {
+    print('Get Events Run------------------------------');
+
+    String url = Api().getEvents;
+    var token = Provider.of<DataProvider>(context, listen: false).token;
+    final responce = await http.post(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token,
+      },
+      body: jsonEncode({"cityName": "Lahore"}),
+    );
+
+    if (responce.statusCode == 200) {
+      var data = jsonDecode(responce.body);
+      print('data: $data');
+
+      var getEvents = getEventFromJson(responce.body);
+      var events = getEvents.eventsList;
+      print(events[0].category.categoryName);
+      return events;
+    } else {
+      return responce.statusCode.toString();
+    }
+  }
 
   // Login
   Future<void> Login(String email, String password) async {
