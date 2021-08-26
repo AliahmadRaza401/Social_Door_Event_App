@@ -1,15 +1,13 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:form_field_validator/form_field_validator.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:social_door/Api/api.dart';
-import 'package:social_door/Api/postEvent.dart';
 import 'package:social_door/Model/createEvent.dart';
-import 'package:social_door/Payment/paypalPayment.dart';
 import 'package:social_door/Providers/dataProvider.dart';
 import 'package:http/http.dart' as http;
+import 'package:social_door/Screens/create_Event/create_event_provider.dart';
 import 'package:social_door/Screens/create_Event/stepspage.dart';
 
 class CreateEventStepper extends StatefulWidget {
@@ -28,22 +26,26 @@ class _CreateEventStepperState extends State<CreateEventStepper> {
   var eventAmentities;
   var eventCategory;
   var eventCancelPolicy;
-  bool selected = false;
+  bool selectedAmen = false;
+  bool selectedPref = false;
+  bool selectedRul = false;
+  bool selectedcanp = false;
+
   final selectedAmentites = [];
   final selectedPrefrences = [];
   final selectedRule = [];
   final selectedCencelPolicy = [];
 
+  var hostedDate;
+  var startTime;
+  var endTime;
+
   TextEditingController title = TextEditingController();
   TextEditingController categorey = TextEditingController();
-  TextEditingController titleController = TextEditingController();
   TextEditingController volNumber = TextEditingController();
   TextEditingController host = TextEditingController();
   TextEditingController userIns = TextEditingController();
   TextEditingController eventcharges = TextEditingController();
-  TextEditingController date = TextEditingController();
-  TextEditingController startTime = TextEditingController();
-  TextEditingController endTime = TextEditingController();
   TextEditingController type = TextEditingController();
   TextEditingController home = TextEditingController();
   TextEditingController street = TextEditingController();
@@ -51,7 +53,7 @@ class _CreateEventStepperState extends State<CreateEventStepper> {
   TextEditingController city = TextEditingController();
   TextEditingController postelCode = TextEditingController();
   TextEditingController email = TextEditingController();
-  TextEditingController password = TextEditingController();
+  TextEditingController phone = TextEditingController();
   TextEditingController description = TextEditingController();
 
   var _cordinates;
@@ -79,26 +81,60 @@ class _CreateEventStepperState extends State<CreateEventStepper> {
     }
   }
 
+  late CreateEventProvider _createEventProvider;
+  var createEventData;
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     createEvent(context);
+
     _getCurrentLocation();
+    _createEventProvider =
+        Provider.of<CreateEventProvider>(context, listen: false);
+    _createEventProvider.deviceDetails();
   }
 
   createMyEvent() {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (BuildContext context) => PaypalPayment(
-          totalAmount: 10,
-          onFinish: (number) async {
-            // payment done
-            print('order id: ' + number);
-          },
-        ),
-      ),
-    );
+    // Navigator.of(context).push(
+    //   MaterialPageRoute(
+    //     builder: (BuildContext context) => PaypalPayment(
+    //       totalAmount: 1,
+    //       onFinish: (number) async {
+    //         // payment done
+    //         print('order id: ' + number);
+    //         CommomWidget().showAlertDialog(context, "payment Done");
+    //       },
+    //     ),
+    //   ),
+    // );
+
+    _createEventProvider.title = title.text.toString();
+    _createEventProvider.categorey = categorey.text.toString();
+    _createEventProvider.city = city.text.toString();
+    _createEventProvider.cordinates = _cordinates;
+    // _createEventProvider.date = date.text.toString();
+    _createEventProvider.description = description.text.toString();
+    _createEventProvider.email = email.text.toString();
+    _createEventProvider.endTime = endTime.text.toString();
+    _createEventProvider.eventcharges = eventcharges.text.toString();
+    _createEventProvider.floor = floor.text.toString();
+    _createEventProvider.home = home.text.toString();
+    _createEventProvider.host = host.text.toString();
+    _createEventProvider.postelCode = postelCode.text.toString();
+    _createEventProvider.phone = phone.text.toString();
+    _createEventProvider.startTime = startTime.text.toString();
+    _createEventProvider.street = street.text.toString();
+    _createEventProvider.type = type.text.toString();
+    _createEventProvider.userIns = userIns.text.toString();
+    _createEventProvider.volNumber = volNumber.text.toString();
+    _createEventProvider.selectedAmentites = selectedAmentites;
+    _createEventProvider.selectedCencelPolicy = selectedCencelPolicy;
+    _createEventProvider.selectedPrefrences = selectedPrefrences;
+    _createEventProvider.selectedRule = selectedRule;
+
+    _createEventProvider.addEvent(context);
   }
 
   @override
@@ -196,10 +232,10 @@ class _CreateEventStepperState extends State<CreateEventStepper> {
                                     controlAffinity:
                                         ListTileControlAffinity.leading,
                                     title: Text(eventAmentities[i].title),
-                                    value: selected,
+                                    value: selectedAmen,
                                     onChanged: (value) {
                                       setState(() {
-                                        selected = value!;
+                                        selectedAmen = value!;
                                         if (value == true) {
                                           selectedAmentites
                                               .add(eventAmentities[i].title);
@@ -237,10 +273,10 @@ class _CreateEventStepperState extends State<CreateEventStepper> {
                                         ListTileControlAffinity.leading,
                                     title:
                                         Text(eventPrefrence[i].prefrenceValue),
-                                    value: selected,
+                                    value: selectedPref,
                                     onChanged: (value) {
                                       setState(() {
-                                        selected = value!;
+                                        selectedPref = value!;
                                         if (value == true) {
                                           selectedPrefrences.add(
                                               eventPrefrence[i].prefrenceValue);
@@ -278,10 +314,10 @@ class _CreateEventStepperState extends State<CreateEventStepper> {
                                         ListTileControlAffinity.leading,
                                     title: Text(eventRule[i].title),
                                     subtitle: Text(eventRule[i].description),
-                                    value: selected,
+                                    value: selectedRul,
                                     onChanged: (value) {
                                       setState(() {
-                                        selected = value!;
+                                        selectedRul = value!;
                                         if (value == true) {
                                           selectedRule.add(eventRule[i].title);
                                         } else {
@@ -319,10 +355,10 @@ class _CreateEventStepperState extends State<CreateEventStepper> {
                                     title: Text(eventCancelPolicy[i].title),
                                     subtitle:
                                         Text(eventCancelPolicy[i].description),
-                                    value: selected,
+                                    value: selectedcanp,
                                     onChanged: (value) {
                                       setState(() {
-                                        selected = value!;
+                                        selectedcanp = value!;
                                         if (value == true) {
                                           selectedCencelPolicy
                                               .add(eventCancelPolicy[i].title);
@@ -344,7 +380,22 @@ class _CreateEventStepperState extends State<CreateEventStepper> {
                       ),
                       Step(
                         title: new Text('Date & Time'),
-                        content: sixPage(context, date, startTime, endTime),
+                        content: Container(
+                          child: Column(
+                            children: [
+                              Card(
+                                child: ListTile(
+                                  leading: Icon(Icons.date_range_outlined),
+                                  title: Text('One-line with both widgets'),
+                                  trailing: Icon(Icons.more_vert),
+                                ),
+                              ),
+                              eventDate(),
+                              eventStartTime(),
+                              eventEndTime()
+                            ],
+                          ),
+                        ),
                         isActive: _currentStep >= 0,
                         state: _currentStep >= 5
                             ? StepState.complete
@@ -361,7 +412,7 @@ class _CreateEventStepperState extends State<CreateEventStepper> {
                       ),
                       Step(
                         title: new Text('Contact Detail'),
-                        content: eightPage(context, email, password),
+                        content: eightPage(context, email, phone),
                         isActive: _currentStep >= 0,
                         state: _currentStep >= 7
                             ? StepState.complete
@@ -379,8 +430,6 @@ class _CreateEventStepperState extends State<CreateEventStepper> {
                         title: new Text('Add Media'),
                         content: tenPage(context, () {
                           print("Click btn");
-                          print(title.text.toString());
-                          print(date.text.toString());
                         }),
                         isActive: _currentStep >= 0,
                         state: _currentStep >= 9
@@ -420,6 +469,77 @@ class _CreateEventStepperState extends State<CreateEventStepper> {
     _currentStep > 0 ? setState(() => _currentStep -= 1) : null;
   }
 
+  Widget eventStartTime() {
+    return TextButton(
+        onPressed: () {
+          DatePicker.showTime12hPicker(context, showTitleActions: true,
+              onChanged: (date) {
+            print('change $date in time zone ' +
+                date.timeZoneOffset.inHours.toString());
+          }, onConfirm: (date) {
+            print('confirm start Time : $date');
+            setState(() {
+              startTime = "${date.hour} : ${date.minute}";
+            });
+          }, currentTime: DateTime.now());
+        },
+        child: Text(
+          'Start Time AM/PM',
+          style: TextStyle(color: Colors.blue),
+        ));
+  }
+
+  Widget eventEndTime() {
+    return TextButton(
+        onPressed: () {
+          DatePicker.showTime12hPicker(context, showTitleActions: true,
+              onChanged: (date) {
+            print('change $date in time zone ' +
+                date.timeZoneOffset.inHours.toString());
+          }, onConfirm: (date) {
+            print('confirm End Time : $date');
+            setState(() {
+              endTime = "${date.hour} : ${date.minute}";
+            });
+          }, currentTime: DateTime.now());
+        },
+        child: Text(
+          ' End Time AM/PM',
+          style: TextStyle(color: Colors.blue),
+        ));
+  }
+
+  Widget eventDate() {
+    return TextButton(
+        onPressed: () {
+          DatePicker.showDatePicker(context,
+              showTitleActions: true,
+              minTime: DateTime(2015, 3, 5),
+              maxTime: DateTime(2021, 6, 7),
+              theme: DatePickerTheme(
+                  headerColor: Colors.orange,
+                  backgroundColor: Colors.blue,
+                  itemStyle: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18),
+                  doneStyle: TextStyle(color: Colors.white, fontSize: 16)),
+              onChanged: (date) {
+            print('change $date in time zone ' +
+                date.timeZoneOffset.inHours.toString());
+          }, onConfirm: (date) {
+            print('confirm ${date.year}-${date.month}-${date.day}');
+            setState(() {
+              hostedDate = "${date.year}-${date.month}-${date.day}";
+            });
+          }, currentTime: DateTime.now(), locale: LocaleType.en);
+        },
+        child: Text(
+          'show date picker',
+          style: TextStyle(color: Colors.blue),
+        ));
+  }
+
   _getCurrentLocation() {
     Geolocator.getCurrentPosition(
             desiredAccuracy: LocationAccuracy.best,
@@ -433,10 +553,4 @@ class _CreateEventStepperState extends State<CreateEventStepper> {
       print(e);
     });
   }
-}
-
-class Emun {
-  Emun({required this.title});
-  late String title;
-  bool isSelected = false;
 }

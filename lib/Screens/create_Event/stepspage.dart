@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:social_door/Screens/create_Event/Image_upload.dart';
+import 'package:social_door/Screens/create_Event/date_time_piker.dart';
 
 Widget firstPage(BuildContext context, title, categorey, volNumber, host,
     userIns, eventcharges) {
@@ -34,22 +34,8 @@ Widget firstPage(BuildContext context, title, categorey, volNumber, host,
   );
 }
 
-Widget sixPage(BuildContext context, date, startTime, endTime) {
-  return Container(
-    child: Column(
-      children: [
-        inputField(context, "Hosted Date", date),
-        SizedBox(
-          height: 10,
-        ),
-        inputField(context, "Start Time", startTime),
-        SizedBox(
-          height: 10,
-        ),
-        inputField(context, "End Time", endTime),
-      ],
-    ),
-  );
+Widget sixPage(BuildContext context) {
+  return Container(child: DateTimePiker());
 }
 
 Widget sevenPage(
@@ -111,9 +97,9 @@ Widget ninePage(BuildContext context, des) {
 }
 
 Widget tenPage(BuildContext context, fun) {
-  return Container(
-    child: ImageUpload(),
-  );
+  return Container(child: null
+      // ImageUpload(),
+      );
 }
 
 Widget inputField(BuildContext context, String text, controller) {

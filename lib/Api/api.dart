@@ -29,4 +29,5 @@ class Api {
   // GEt All Events
   String getEvents = BASE_URL + "/api/user/events/getEvents";
   String getEventMedia = BASE_URL + "/media/";
+  String addEvent = BASE_URL + "/api/user/events/addEvent";
 }

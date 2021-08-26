@@ -52,7 +52,13 @@ dependencies:
   image_cropper: 1.0.2
   image_picker: 
   geolocator: ^7.0.3
+  device_info: ^2.0.2
+  # file_picker: ^3.0.1
+  flutter_datetime_picker: ^1.5.1
 
+  flutter_localizations: 
+    sdk: flutter
+    version: ^0.0.0
 
 
 dev_dependencies:

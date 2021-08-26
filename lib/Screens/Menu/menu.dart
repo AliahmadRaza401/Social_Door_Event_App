@@ -5,6 +5,7 @@ import 'package:social_door/Screens/Authentication/Login/login.dart';
 
 import 'package:social_door/Screens/create_Event/Image_upload.dart';
 import 'package:social_door/Screens/create_Event/createEventStepper.dart';
+import 'package:social_door/Screens/create_Event/date_time_piker.dart';
 
 class Menu extends StatefulWidget {
   Menu({Key? key}) : super(key: key);
@@ -42,27 +43,19 @@ class _MenuState extends State<Menu> {
 
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (BuildContext context) => PaypalPayment(
-                          totalAmount: 10,
-                          onFinish: (number) async {
-                            // payment done
-                            print('order id: ' + number);
-                          },
-                        ),
-                      ),
+                          builder: (BuildContext context) => Login()),
                     );
                   },
-                  child: Text("Payment")),
+                  child: Text("DAte Time")),
               ElevatedButton(
                   onPressed: () {
                     userLoginFalse();
-                    Navigator.of(context)
-                        .push(MaterialPageRoute(builder: (context) => Login()));
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => DateTimePiker()));
                   },
                   child: Text("LogOut")),
               ElevatedButton(
                   onPressed: () {
-                    userLoginFalse();
                     Navigator.of(context).push(
                         MaterialPageRoute(builder: (context) => ImageUpload()));
                   },
