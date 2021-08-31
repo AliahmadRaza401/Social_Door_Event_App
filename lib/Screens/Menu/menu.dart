@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:social_door/Payment/paypalPayment.dart';
 import 'package:social_door/Screens/Authentication/Login/login.dart';
+import 'package:social_door/Screens/Menu/multiForm.dart';
 
 import 'package:social_door/Screens/create_Event/Image_upload.dart';
 import 'package:social_door/Screens/create_Event/createEventStepper.dart';
@@ -37,7 +38,7 @@ class _MenuState extends State<Menu> {
               ),
               ElevatedButton(
                   onPressed: () {
-                    // userLoginFalse();
+                    userLoginFalse();
                     // Navigator.of(context)
                     //     .push(MaterialPageRoute(builder: (context) => Login()));
 
@@ -46,20 +47,28 @@ class _MenuState extends State<Menu> {
                           builder: (BuildContext context) => Login()),
                     );
                   },
-                  child: Text("DAte Time")),
+                  child: Text("LogOut")),
               ElevatedButton(
                   onPressed: () {
                     userLoginFalse();
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => DateTimePiker()));
                   },
-                  child: Text("LogOut")),
+                  child: Text("Date and Time")),
               ElevatedButton(
                   onPressed: () {
                     Navigator.of(context).push(
                         MaterialPageRoute(builder: (context) => ImageUpload()));
                   },
                   child: Text("Image Picker")),
+              ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => MyHomePage(
+                              title: 'hy',
+                            )));
+                  },
+                  child: Text("Multi Form")),
             ],
           ),
         ),

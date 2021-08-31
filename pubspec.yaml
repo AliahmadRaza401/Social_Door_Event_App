@@ -55,6 +55,8 @@ dependencies:
   device_info: ^2.0.2
   # file_picker: ^3.0.1
   flutter_datetime_picker: ^1.5.1
+  flow_builder: ^0.0.4
+  cool_stepper: ^1.2.1
 
   flutter_localizations: 
     sdk: flutter

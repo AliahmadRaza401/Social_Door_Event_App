@@ -68,10 +68,10 @@ class CreateEventProvider extends ChangeNotifier {
           'data': {
             'title': title,
             'category': categorey,
-            'hostedDate': "2020-09-18",
-            'startTime': "2020-09-18",
-            'endTime': "2020-09-18",
-            'eventPhone': "+923069601630",
+            'hostedDate': date,
+            'startTime': startTime,
+            'endTime': endTime,
+            'eventPhone': phone,
             'eventEmailAddress': email,
             'eventCharges': eventcharges,
             'host': deviceID,
@@ -91,7 +91,7 @@ class CreateEventProvider extends ChangeNotifier {
               'coordinates': cordinates,
             },
             'description': description,
-            'paypalToken': "654dgd65454ggd",
+            'paypalToken': paymentInfo,
           },
         },
         //  jsonEncode({

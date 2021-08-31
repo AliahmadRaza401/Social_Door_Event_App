@@ -5,10 +5,12 @@ import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'package:social_door/Api/api.dart';
 import 'package:social_door/Model/createEvent.dart';
+import 'package:social_door/Payment/paypalPayment.dart';
 import 'package:social_door/Providers/dataProvider.dart';
 import 'package:http/http.dart' as http;
 import 'package:social_door/Screens/create_Event/create_event_provider.dart';
 import 'package:social_door/Screens/create_Event/stepspage.dart';
+import 'package:social_door/common_widget/commom_widget.dart';
 
 class CreateEventStepper extends StatefulWidget {
   @override
@@ -16,6 +18,7 @@ class CreateEventStepper extends StatefulWidget {
 }
 
 class _CreateEventStepperState extends State<CreateEventStepper> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   int _currentStep = 0;
   bool value = false;
   StepperType stepperType = StepperType.vertical;
@@ -70,6 +73,7 @@ class _CreateEventStepperState extends State<CreateEventStepper> {
 
     if (responce.statusCode == 200) {
       var data = jsonDecode(responce.body);
+      print('data: $data');
       var createEventData = welcomeFromJson(responce.body);
       eventRule = createEventData.eventCreationData.eventRulesList;
       eventAmentities = createEventData.eventCreationData.eventAmenitiesList;
@@ -97,6 +101,7 @@ class _CreateEventStepperState extends State<CreateEventStepper> {
   }
 
   createMyEvent() {
+    print("cl;ick");
     // Navigator.of(context).push(
     //   MaterialPageRoute(
     //     builder: (BuildContext context) => PaypalPayment(
@@ -114,7 +119,9 @@ class _CreateEventStepperState extends State<CreateEventStepper> {
     _createEventProvider.categorey = categorey.text.toString();
     _createEventProvider.city = city.text.toString();
     _createEventProvider.cordinates = _cordinates;
-    // _createEventProvider.date = date.text.toString();
+    _createEventProvider.date = hostedDate;
+    _createEventProvider.startTime = startTime;
+    _createEventProvider.endTime = endTime;
     _createEventProvider.description = description.text.toString();
     _createEventProvider.email = email.text.toString();
     _createEventProvider.endTime = endTime.text.toString();
@@ -166,277 +173,295 @@ class _CreateEventStepperState extends State<CreateEventStepper> {
                   ],
                 ),
               ),
-              Expanded(
-                child: Theme(
-                  data: ThemeData(
-                    colorScheme: Theme.of(context)
-                        .colorScheme
-                        .copyWith(primary: Color(0xffff5018)),
-                  ),
-                  child: Stepper(
-                    controlsBuilder: (BuildContext context,
-                        {onStepContinue, onStepCancel}) {
-                      return Row(
-                        children: <Widget>[
-                          ElevatedButton(
-                            onPressed:
-                                _currentStep == 9 ? createMyEvent : continued,
-                            child: _currentStep == 9
-                                ? Text(r"Create Event 1$")
-                                : Text('Continue'),
-                          ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          ElevatedButton(
-                            style: ButtonStyle(
-                              backgroundColor:
-                                  MaterialStateProperty.all(Colors.grey[400]),
+              Form(
+                key: _formKey,
+                child: Expanded(
+                  child: Theme(
+                    data: ThemeData(
+                      colorScheme: Theme.of(context)
+                          .colorScheme
+                          .copyWith(primary: Color(0xffff5018)),
+                    ),
+                    child: Stepper(
+                      controlsBuilder: (BuildContext context,
+                          {onStepContinue, onStepCancel}) {
+                        return Row(
+                          children: <Widget>[
+                            ElevatedButton(
+                              onPressed: () {
+                                // _currentStep == 9 ? createMyEvent : continued;
+                                if (_formKey.currentState!.validate()) {
+                                  print("validate");
+                                  continued();
+                                  // if (_currentStep == 9) {
+                                  //   createMyEvent();
+                                  // }
+                                } else if (_currentStep == 9) {
+                                  createMyEvent();
+                                } else {
+                                  print("No Validate");
+                                }
+                                // continued();
+                                // print("click");
+                              },
+                              child: _currentStep == 9
+                                  ? Text(r"Create Event 1$")
+                                  : Text('Continue'),
                             ),
-                            onPressed: cancel,
-                            child: const Text('Back'),
-                          ),
-                        ],
-                      );
-                    },
-                    type: stepperType,
-                    physics: ScrollPhysics(),
-                    currentStep: _currentStep,
-                    onStepTapped: (step) => tapped(step),
-                    // onStepContinue: _currentStep == 9 ? null : continued,
-                    // onStepCancel: _currentStep == 9 ? null : cancel,
-                    steps: <Step>[
-                      Step(
-                        title: new Text('Title'),
-                        content: firstPage(context, title, categorey, volNumber,
-                            host, userIns, eventcharges),
-                        isActive: _currentStep >= 0,
-                        state: _currentStep >= 0
-                            ? StepState.complete
-                            : StepState.disabled,
-                      ),
-                      Step(
-                        title: new Text('Amenities'),
-                        content: ListView(
-                          physics: ClampingScrollPhysics(),
-                          shrinkWrap: true,
-                          children: [
-                            ListView.builder(
-                                shrinkWrap: true,
-                                physics: ClampingScrollPhysics(),
-                                itemCount: eventAmentities == null
-                                    ? 0
-                                    : eventAmentities.length,
-                                itemBuilder: (context, i) {
-                                  return CheckboxListTile(
-                                    controlAffinity:
-                                        ListTileControlAffinity.leading,
-                                    title: Text(eventAmentities[i].title),
-                                    value: selectedAmen,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        selectedAmen = value!;
-                                        if (value == true) {
-                                          selectedAmentites
-                                              .add(eventAmentities[i].title);
-                                        } else {
-                                          selectedAmentites
-                                              .remove(eventAmentities[i].title);
-                                        }
-                                      });
-                                      print(selectedAmentites);
-                                    },
-                                  );
-                                })
-                          ],
-                        ),
-                        isActive: _currentStep >= 0,
-                        state: _currentStep >= 1
-                            ? StepState.complete
-                            : StepState.disabled,
-                      ),
-                      Step(
-                        title: new Text('Prefrences '),
-                        content: ListView(
-                          physics: ClampingScrollPhysics(),
-                          shrinkWrap: true,
-                          children: [
-                            ListView.builder(
-                                shrinkWrap: true,
-                                physics: ClampingScrollPhysics(),
-                                itemCount: eventAmentities == null
-                                    ? 0
-                                    : eventAmentities.length,
-                                itemBuilder: (context, i) {
-                                  return CheckboxListTile(
-                                    controlAffinity:
-                                        ListTileControlAffinity.leading,
-                                    title:
-                                        Text(eventPrefrence[i].prefrenceValue),
-                                    value: selectedPref,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        selectedPref = value!;
-                                        if (value == true) {
-                                          selectedPrefrences.add(
-                                              eventPrefrence[i].prefrenceValue);
-                                        } else {
-                                          selectedPrefrences.remove(
-                                              eventPrefrence[i].prefrenceValue);
-                                        }
-                                      });
-                                      print(selectedPrefrences);
-                                    },
-                                  );
-                                })
-                          ],
-                        ),
-                        isActive: _currentStep >= 0,
-                        state: _currentStep >= 2
-                            ? StepState.complete
-                            : StepState.disabled,
-                      ),
-                      Step(
-                        title: new Text('Rule '),
-                        content: ListView(
-                          physics: ClampingScrollPhysics(),
-                          shrinkWrap: true,
-                          children: [
-                            ListView.builder(
-                                shrinkWrap: true,
-                                physics: ClampingScrollPhysics(),
-                                itemCount: eventAmentities == null
-                                    ? 0
-                                    : eventAmentities.length,
-                                itemBuilder: (context, i) {
-                                  return CheckboxListTile(
-                                    controlAffinity:
-                                        ListTileControlAffinity.leading,
-                                    title: Text(eventRule[i].title),
-                                    subtitle: Text(eventRule[i].description),
-                                    value: selectedRul,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        selectedRul = value!;
-                                        if (value == true) {
-                                          selectedRule.add(eventRule[i].title);
-                                        } else {
-                                          selectedRule
-                                              .remove(eventRule[i].title);
-                                        }
-                                      });
-                                      print(selectedRule);
-                                    },
-                                  );
-                                })
-                          ],
-                        ),
-                        isActive: _currentStep >= 0,
-                        state: _currentStep >= 3
-                            ? StepState.complete
-                            : StepState.disabled,
-                      ),
-                      Step(
-                        title: new Text('Cancel Policy'),
-                        content: ListView(
-                          physics: ClampingScrollPhysics(),
-                          shrinkWrap: true,
-                          children: [
-                            ListView.builder(
-                                shrinkWrap: true,
-                                physics: ClampingScrollPhysics(),
-                                itemCount: eventAmentities == null
-                                    ? 0
-                                    : eventAmentities.length,
-                                itemBuilder: (context, i) {
-                                  return CheckboxListTile(
-                                    controlAffinity:
-                                        ListTileControlAffinity.leading,
-                                    title: Text(eventCancelPolicy[i].title),
-                                    subtitle:
-                                        Text(eventCancelPolicy[i].description),
-                                    value: selectedcanp,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        selectedcanp = value!;
-                                        if (value == true) {
-                                          selectedCencelPolicy
-                                              .add(eventCancelPolicy[i].title);
-                                        } else {
-                                          selectedCencelPolicy.remove(
-                                              eventCancelPolicy[i].title);
-                                        }
-                                      });
-                                      print(selectedCencelPolicy);
-                                    },
-                                  );
-                                })
-                          ],
-                        ),
-                        isActive: _currentStep >= 0,
-                        state: _currentStep >= 4
-                            ? StepState.complete
-                            : StepState.disabled,
-                      ),
-                      Step(
-                        title: new Text('Date & Time'),
-                        content: Container(
-                          child: Column(
-                            children: [
-                              Card(
-                                child: ListTile(
-                                  leading: Icon(Icons.date_range_outlined),
-                                  title: Text('One-line with both widgets'),
-                                  trailing: Icon(Icons.more_vert),
-                                ),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            ElevatedButton(
+                              style: ButtonStyle(
+                                backgroundColor:
+                                    MaterialStateProperty.all(Colors.grey[400]),
                               ),
-                              eventDate(),
-                              eventStartTime(),
-                              eventEndTime()
+                              onPressed: cancel,
+                              child: const Text('Back'),
+                            ),
+                          ],
+                        );
+                      },
+                      type: stepperType,
+                      physics: ScrollPhysics(),
+                      currentStep: _currentStep,
+                      onStepTapped: (step) => tapped(step),
+                      // onStepContinue: _currentStep == 9 ? null : continued,
+                      // onStepCancel: _currentStep == 9 ? null : cancel,
+                      steps: <Step>[
+                        // Step(
+                        //   title: new Text('Title'),
+                        //   content: firstPage(context, title, categorey,
+                        //       volNumber, host, userIns, eventcharges),
+                        //   isActive: _currentStep >= 0,
+                        //   state: _currentStep >= 0
+                        //       ? StepState.complete
+                        //       : StepState.disabled,
+                        // ),
+                        Step(
+                          title: new Text('Amenities'),
+                          content: ListView(
+                            physics: ClampingScrollPhysics(),
+                            shrinkWrap: true,
+                            children: [
+                              ListView.builder(
+                                  shrinkWrap: true,
+                                  physics: ClampingScrollPhysics(),
+                                  itemCount: eventAmentities == null
+                                      ? 0
+                                      : eventAmentities.length,
+                                  itemBuilder: (context, i) {
+                                    return CheckboxListTile(
+                                      controlAffinity:
+                                          ListTileControlAffinity.leading,
+                                      title: Text(eventAmentities[i].title),
+                                      value: selectedAmen,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          selectedAmen = value!;
+                                          if (value == true) {
+                                            selectedAmentites
+                                                .add(eventAmentities[i].title);
+                                          } else {
+                                            selectedAmentites.remove(
+                                                eventAmentities[i].title);
+                                          }
+                                        });
+                                        print(selectedAmentites);
+                                      },
+                                    );
+                                  })
                             ],
                           ),
+                          isActive: _currentStep >= 0,
+                          state: _currentStep >= 1
+                              ? StepState.complete
+                              : StepState.disabled,
                         ),
-                        isActive: _currentStep >= 0,
-                        state: _currentStep >= 5
-                            ? StepState.complete
-                            : StepState.disabled,
-                      ),
-                      Step(
-                        title: new Text('Address'),
-                        content: sevenPage(context, type, home, street, floor,
-                            city, postelCode),
-                        isActive: _currentStep >= 0,
-                        state: _currentStep >= 6
-                            ? StepState.complete
-                            : StepState.disabled,
-                      ),
-                      Step(
-                        title: new Text('Contact Detail'),
-                        content: eightPage(context, email, phone),
-                        isActive: _currentStep >= 0,
-                        state: _currentStep >= 7
-                            ? StepState.complete
-                            : StepState.disabled,
-                      ),
-                      Step(
-                        title: new Text('Descripton'),
-                        content: ninePage(context, description),
-                        isActive: _currentStep >= 0,
-                        state: _currentStep >= 8
-                            ? StepState.complete
-                            : StepState.disabled,
-                      ),
-                      Step(
-                        title: new Text('Add Media'),
-                        content: tenPage(context, () {
-                          print("Click btn");
-                        }),
-                        isActive: _currentStep >= 0,
-                        state: _currentStep >= 9
-                            ? StepState.complete
-                            : StepState.disabled,
-                      ),
-                    ],
+                        Step(
+                          title: new Text('Prefrences '),
+                          content: ListView(
+                            physics: ClampingScrollPhysics(),
+                            shrinkWrap: true,
+                            children: [
+                              ListView.builder(
+                                  shrinkWrap: true,
+                                  physics: ClampingScrollPhysics(),
+                                  itemCount: eventAmentities == null
+                                      ? 0
+                                      : eventAmentities.length,
+                                  itemBuilder: (context, i) {
+                                    return CheckboxListTile(
+                                      controlAffinity:
+                                          ListTileControlAffinity.leading,
+                                      title: Text(
+                                          eventPrefrence[i].prefrenceValue),
+                                      value: selectedPref,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          selectedPref = value!;
+                                          if (value == true) {
+                                            selectedPrefrences.add(
+                                                eventPrefrence[i]
+                                                    .prefrenceValue);
+                                          } else {
+                                            selectedPrefrences.remove(
+                                                eventPrefrence[i]
+                                                    .prefrenceValue);
+                                          }
+                                        });
+                                        print(selectedPrefrences);
+                                      },
+                                    );
+                                  })
+                            ],
+                          ),
+                          isActive: _currentStep >= 0,
+                          state: _currentStep >= 2
+                              ? StepState.complete
+                              : StepState.disabled,
+                        ),
+                        Step(
+                          title: new Text('Rule '),
+                          content: ListView(
+                            physics: ClampingScrollPhysics(),
+                            shrinkWrap: true,
+                            children: [
+                              ListView.builder(
+                                  shrinkWrap: true,
+                                  physics: ClampingScrollPhysics(),
+                                  itemCount: eventAmentities == null
+                                      ? 0
+                                      : eventAmentities.length,
+                                  itemBuilder: (context, i) {
+                                    return CheckboxListTile(
+                                      controlAffinity:
+                                          ListTileControlAffinity.leading,
+                                      title: Text(eventRule[i].title),
+                                      subtitle: Text(eventRule[i].description),
+                                      value: selectedRul,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          selectedRul = value!;
+                                          if (value == true) {
+                                            selectedRule
+                                                .add(eventRule[i].title);
+                                          } else {
+                                            selectedRule
+                                                .remove(eventRule[i].title);
+                                          }
+                                        });
+                                        print(selectedRule);
+                                      },
+                                    );
+                                  })
+                            ],
+                          ),
+                          isActive: _currentStep >= 0,
+                          state: _currentStep >= 3
+                              ? StepState.complete
+                              : StepState.disabled,
+                        ),
+                        Step(
+                          title: new Text('Cancel Policy'),
+                          content: ListView(
+                            physics: ClampingScrollPhysics(),
+                            shrinkWrap: true,
+                            children: [
+                              ListView.builder(
+                                  shrinkWrap: true,
+                                  physics: ClampingScrollPhysics(),
+                                  itemCount: eventAmentities == null
+                                      ? 0
+                                      : eventAmentities.length,
+                                  itemBuilder: (context, i) {
+                                    return CheckboxListTile(
+                                      controlAffinity:
+                                          ListTileControlAffinity.leading,
+                                      title: Text(eventCancelPolicy[i].title),
+                                      subtitle: Text(
+                                          eventCancelPolicy[i].description),
+                                      value: selectedcanp,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          selectedcanp = value!;
+                                          if (value == true) {
+                                            selectedCencelPolicy.add(
+                                                eventCancelPolicy[i].title);
+                                          } else {
+                                            selectedCencelPolicy.remove(
+                                                eventCancelPolicy[i].title);
+                                          }
+                                        });
+                                        print(selectedCencelPolicy);
+                                      },
+                                    );
+                                  })
+                            ],
+                          ),
+                          isActive: _currentStep >= 0,
+                          state: _currentStep >= 4
+                              ? StepState.complete
+                              : StepState.disabled,
+                        ),
+                        Step(
+                          title: new Text('Date & Time'),
+                          content: Container(
+                            child: Column(
+                              children: [
+                                // Card(
+                                //   child: ListTile(
+                                //     leading: Icon(Icons.date_range_outlined),
+                                //     title: Text('One-line with both widgets'),
+                                //     trailing: Icon(Icons.more_vert),
+                                //   ),
+                                // ),
+                                eventDate(),
+                                eventStartTime(),
+                                eventEndTime()
+                              ],
+                            ),
+                          ),
+                          isActive: _currentStep >= 0,
+                          state: _currentStep >= 5
+                              ? StepState.complete
+                              : StepState.disabled,
+                        ),
+                        // Step(
+                        //   title: new Text('Address'),
+                        //   content: sevenPage(context, type, home, street, floor,
+                        //       city, postelCode),
+                        //   isActive: _currentStep >= 0,
+                        //   state: _currentStep >= 6
+                        //       ? StepState.complete
+                        //       : StepState.disabled,
+                        // ),
+                        // Step(
+                        //   title: new Text('Contact Detail'),
+                        //   content: eightPage(context, email, phone),
+                        //   isActive: _currentStep >= 0,
+                        //   state: _currentStep >= 7
+                        //       ? StepState.complete
+                        //       : StepState.disabled,
+                        // ),
+                        // Step(
+                        //   title: new Text('Descripton'),
+                        //   content: ninePage(context, description),
+                        //   isActive: _currentStep >= 0,
+                        //   state: _currentStep >= 8
+                        //       ? StepState.complete
+                        //       : StepState.disabled,
+                        // ),
+                        // Step(
+                        //   title: new Text('Add Media'),
+                        //   content: tenPage(),
+                        //   isActive: _currentStep >= 0,
+                        //   state: _currentStep >= 9
+                        //       ? StepState.complete
+                        //       : StepState.disabled,
+                        // ),
+                      ],
+                    ),
                   ),
                 ),
               ),
