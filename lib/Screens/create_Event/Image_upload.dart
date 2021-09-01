@@ -294,6 +294,7 @@ class _ImageUploadState extends State<ImageUpload> {
         imageFile = File(pickedFile.path);
         _createEventProvider.imagefile = imageFile;
       });
+
     }
   }
 }

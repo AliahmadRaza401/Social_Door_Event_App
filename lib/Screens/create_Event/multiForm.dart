@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:cool_stepper/cool_stepper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:form_field_validator/form_field_validator.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'package:social_door/Api/api.dart';
@@ -14,16 +15,16 @@ import 'package:social_door/Screens/create_Event/create_event_widget.dart';
 import 'package:http/http.dart' as http;
 import 'package:social_door/common_widget/commom_widget.dart';
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key? key, required this.title}) : super(key: key);
+class CreateEventForm extends StatefulWidget {
+  CreateEventForm({Key? key, required this.title}) : super(key: key);
 
   String title;
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _CreateEventFormState createState() => _CreateEventFormState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _CreateEventFormState extends State<CreateEventForm> {
   final _formKey = GlobalKey<FormState>();
   String? selectedRole = 'Writer';
 
@@ -482,7 +483,7 @@ class _MyHomePageState extends State<MyHomePage> {
               inputField(
                 context,
                 "Postel Code",
-                volNumber,
+                postelCode,
                 (value) {
                   if (value!.isEmpty) {
                     return 'postel code is required';
@@ -505,16 +506,10 @@ class _MyHomePageState extends State<MyHomePage> {
           width: MediaQuery.of(context).size.width * .9,
           child: Column(
             children: [
-              inputField(
+              emailInputField(
                 context,
                 "Email",
                 email,
-                (value) {
-                  if (value!.isEmpty) {
-                    return 'email is required';
-                  }
-                  return null;
-                },
               ),
               space(context),
               inputField(
@@ -524,6 +519,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 (value) {
                   if (value!.isEmpty) {
                     return 'phone number is required';
+                  } else if (value.length < 11) {
+                    return 'Please enter valid phone';
                   }
                   return null;
                 },
@@ -596,8 +593,11 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Widget inputField(BuildContext context, title,
-      TextEditingController controller, FormFieldValidator<String> validator) {
+  Widget emailInputField(
+    BuildContext context,
+    title,
+    TextEditingController controller,
+  ) {
     return Container(
       width: MediaQuery.of(context).size.width * 0.8,
       decoration: BoxDecoration(
@@ -609,7 +609,10 @@ class _MyHomePageState extends State<MyHomePage> {
         //   onChange = value;
         // },
         controller: controller,
-        validator: validator,
+        validator: MultiValidator([
+          RequiredValidator(errorText: "Requied"),
+          EmailValidator(errorText: "Enter valid Email address")
+        ]),
         cursorColor: Color(0xffff5018),
         cursorWidth: 2.0,
         cursorHeight: 26.0,

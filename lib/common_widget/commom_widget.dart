@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 
-
-class CommomWidget{
-  
+class CommomWidget {
   // Dialog alert
   showAlertDialog(BuildContext context, var error) {
     // setState(() {
@@ -24,7 +22,7 @@ class CommomWidget{
     // );
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
-      title: Text("Wrong Email Address"),
+      title: Text("Some thing went wrong!"),
       content: Text(
         error,
         // style: TextStyle(fontSize: 18,fontFamily: Variable.fontStyle),

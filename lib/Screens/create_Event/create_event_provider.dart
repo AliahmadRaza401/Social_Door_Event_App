@@ -46,7 +46,7 @@ class CreateEventProvider extends ChangeNotifier {
   var description;
   var cordinates;
   var paymentInfo;
-  late File imagefile;
+  var imagefile;
 
   Future<void> addEvent(BuildContext context) async {
     try {
@@ -56,15 +56,13 @@ class CreateEventProvider extends ChangeNotifier {
       print('token: $token');
 
       http.Response _response = await http.post(
-        Uri.parse("http://f3aa-45-117-104-163.ngrok.io/api/user/events/addEvent"
-            // Api().addEvent
-            ),
+        Uri.parse(Api().addEvent),
         headers: {
-          // 'content-Type': 'application/json',
+          'content-Type': 'application/json',
           'Authorization': token,
         },
-        body: {
-          'eventThumbNail': "",
+        body: jsonEncode({
+          'eventThumbNail': imagefile,
           'data': {
             'title': title,
             'category': categorey,
@@ -93,7 +91,7 @@ class CreateEventProvider extends ChangeNotifier {
             'description': description,
             'paypalToken': paymentInfo,
           },
-        },
+        }),
         //  jsonEncode({
         //   'eventThumbNail': imagefile,
         //   'data': {
@@ -126,16 +124,20 @@ class CreateEventProvider extends ChangeNotifier {
         //   },
         // }),
       );
-      // print('_response------------ : $_response');
-      // var result = jsonDecode(_response.body);
-      // print('result-------: $result');
+      print('Add Event _response------------ : $_response');
+      var result = jsonDecode(_response.body);
+      print('result-------: $result');
 
-      // if (_response.statusCode == 200) {
-      //   print(_response.body);
-      //   CommomWidget().showAlertDialog(context, "EventCreate Successfully");
-      // } else {
-      //   CommomWidget().showAlertDialog(context, "Something Wrong");
-      // }
+      if (_response.statusCode == 200) {
+        print("Add event APi Success!");
+
+        print(_response.body);
+
+        CommomWidget().showAlertDialog(context, "EventCreate Successfully");
+      } else {
+        print("Responce Fail");
+        CommomWidget().showAlertDialog(context, "Something Wrong");
+      }
     } catch (e) {
       return CommomWidget().showAlertDialog(context, e.toString());
     }

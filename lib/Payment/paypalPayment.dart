@@ -6,7 +6,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:social_door/Api/api.dart';
 import 'package:social_door/Payment/paypalServices.dart';
 import 'package:social_door/Providers/dataProvider.dart';
-import 'package:social_door/Screens/create_Event/createEventStepper.dart';
 import 'package:social_door/Screens/create_Event/create_event_provider.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:http/http.dart' as http;
@@ -35,11 +34,12 @@ class PaypalPaymentState extends State<PaypalPayment> {
 
   bool isEnableShipping = false;
   bool isEnableAddress = false;
+  bool _loading = true;
 
   String returnURL = 'return.example.com';
   String cancelURL = 'cancel.example.com';
   late String checkoutUrl;
-  late String executeUrl;
+  late String executeUrl = "";
   late String accessToken;
   PaypalServices services = PaypalServices();
   late CreateEventProvider _createEventProvider;
@@ -61,6 +61,7 @@ class PaypalPaymentState extends State<PaypalPayment> {
           setState(() {
             checkoutUrl = res["approvalUrl"].toString();
             executeUrl = res["executeUrl"].toString();
+            _loading = false;
           });
         }
       } catch (e) {
@@ -166,49 +167,51 @@ class PaypalPaymentState extends State<PaypalPayment> {
             onTap: () => Navigator.pop(context),
           ),
         ),
-        body: WebView(
-          initialUrl: checkoutUrl,
-          javascriptMode: JavascriptMode.unrestricted,
-          navigationDelegate: (NavigationRequest request) {
-            if (request.url.contains(returnURL)) {
-              final uri = Uri.parse(request.url);
-              final payerID = uri.queryParameters['PayerID'];
-              final data = uri.queryParameters;
-              _createEventProvider.paymentInfo = data;
-              print('paymentInfo: ${_createEventProvider.paymentInfo}');
-              _createEventProvider.addEvent(context);
-              // addEvent();
-              // Navigator.push(
-              //     context,
-              //     MaterialPageRoute(
-              //         builder: (context) => CreateEventStepper()));
+        body: checkoutUrl == ""
+            ? CircularProgressIndicator()
+            : WebView(
+                initialUrl: checkoutUrl,
+                javascriptMode: JavascriptMode.unrestricted,
+                navigationDelegate: (NavigationRequest request) {
+                  if (request.url.contains(returnURL)) {
+                    final uri = Uri.parse(request.url);
+                    final payerID = uri.queryParameters['PayerID'];
+                    final data = uri.queryParameters;
+                    _createEventProvider.paymentInfo = data;
+                    print('paymentInfo: ${_createEventProvider.paymentInfo}');
+                    _createEventProvider.addEvent(context);
+                    // addEvent();
+                    // Navigator.push(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //         builder: (context) => CreateEventStepper()));
 
-              // if (payerID != null) {
-              //   services
-              //       .executePayment(executeUrl, payerID, accessToken)
-              //       .then((id) {
-              //     widget.onFinish(id);
-              //     // Navigator.of(context).pop();
-              //     print('1');
-              //     // Navigator.push(context, MaterialPageRoute(builder: (context)=>OrderStatus()));
-              //   });
-              // } else {
-              //   // Navigator.of(context).pop();
-              //   print('2');
-              //   // Navigator.push(context, MaterialPageRoute(builder: (context)=>OrderStatus()));
+                    // if (payerID != null) {
+                    //   services
+                    //       .executePayment(executeUrl, payerID, accessToken)
+                    //       .then((id) {
+                    //     widget.onFinish(id);
+                    //     // Navigator.of(context).pop();
+                    //     print('1');
+                    //     // Navigator.push(context, MaterialPageRoute(builder: (context)=>OrderStatus()));
+                    //   });
+                    // } else {
+                    //   // Navigator.of(context).pop();
+                    //   print('2');
+                    //   // Navigator.push(context, MaterialPageRoute(builder: (context)=>OrderStatus()));
 
-              // }
-              // // Navigator.of(context).pop();
-              // print('3');
-              // // Navigator.push(context, MaterialPageRoute(builder: (context)=>OrderStatus()));
+                    // }
+                    // // Navigator.of(context).pop();
+                    // print('3');
+                    // // Navigator.push(context, MaterialPageRoute(builder: (context)=>OrderStatus()));
 
-            }
-            if (request.url.contains(cancelURL)) {
-              Navigator.of(context).pop();
-            }
-            return NavigationDecision.navigate;
-          },
-        ),
+                  }
+                  if (request.url.contains(cancelURL)) {
+                    Navigator.of(context).pop();
+                  }
+                  return NavigationDecision.navigate;
+                },
+              ),
       );
     } else {
       return Scaffold(
@@ -222,60 +225,10 @@ class PaypalPaymentState extends State<PaypalPayment> {
           backgroundColor: Colors.black12,
           elevation: 0.0,
         ),
-        body: Center(child: Container(child: CircularProgressIndicator())),
+        body: checkoutUrl == ""
+            ? CircularProgressIndicator()
+            : Center(child: Container(child: CircularProgressIndicator())),
       );
-    }
-  }
-
-  addEvent() async {
-    try {
-      print(" ---------Ad Event------------------");
-      print('email: ${_createEventProvider.title}');
-      var token = Provider.of<DataProvider>(context, listen: false).token;
-      final _response = await http.post(
-        Uri.parse(Api().addEvent),
-        headers: {
-          'content-Type': 'application/json',
-          'Authorization': token,
-        },
-        body: jsonEncode({
-          'eventThumbNail': _createEventProvider.imagefile,
-          'data': {
-            'title': _createEventProvider.title,
-            'category': _createEventProvider.categorey,
-            'hostedDate': _createEventProvider.date,
-            'startTime': _createEventProvider.startTime,
-            'endTime': _createEventProvider.endTime,
-            'eventPhone': _createEventProvider.phone,
-            'eventEmailAddress': _createEventProvider.email,
-            'eventCharges': _createEventProvider.eventcharges,
-            'host': _createEventProvider.host,
-            'volume': _createEventProvider.volNumber,
-            'rules': _createEventProvider.selectedRule,
-            'prefrences': _createEventProvider.selectedPrefrences,
-            'amenities': _createEventProvider.selectedAmentites,
-            'userInstructions': _createEventProvider.userIns,
-            'cancellationPolicy': _createEventProvider.selectedCencelPolicy,
-            'venue': {
-              'type': _createEventProvider.type,
-              'home': _createEventProvider.home,
-              'street': _createEventProvider.street,
-              'floor': _createEventProvider.floor,
-              'city': _createEventProvider.city,
-              'postal_code': _createEventProvider.postelCode,
-              'coordinates': _createEventProvider.cordinates,
-            },
-            'description': _createEventProvider.description,
-            'paypalToken': _createEventProvider.paymentInfo
-          },
-        }),
-      );
-
-      print('_response------------ : $_response');
-      var result = jsonDecode(_response.body);
-      print('result-------: $result');
-    } catch (e) {
-      return e.toString();
     }
   }
 }

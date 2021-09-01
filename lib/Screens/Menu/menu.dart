@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:social_door/Payment/paypalPayment.dart';
 import 'package:social_door/Screens/Authentication/Login/login.dart';
-import 'package:social_door/Screens/Menu/multiForm.dart';
+import 'package:social_door/Screens/create_Event/multiForm.dart';
 
 import 'package:social_door/Screens/create_Event/Image_upload.dart';
-import 'package:social_door/Screens/create_Event/createEventStepper.dart';
-import 'package:social_door/Screens/create_Event/date_time_piker.dart';
 
 class Menu extends StatefulWidget {
   Menu({Key? key}) : super(key: key);
@@ -32,7 +30,8 @@ class _MenuState extends State<Menu> {
               ElevatedButton(
                 onPressed: () {
                   Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => CreateEventStepper()));
+                      builder: (context) =>
+                          CreateEventForm(title: "Create Event")));
                 },
                 child: Text("create Event"),
               ),
@@ -50,13 +49,6 @@ class _MenuState extends State<Menu> {
                   child: Text("LogOut")),
               ElevatedButton(
                   onPressed: () {
-                    userLoginFalse();
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => DateTimePiker()));
-                  },
-                  child: Text("Date and Time")),
-              ElevatedButton(
-                  onPressed: () {
                     Navigator.of(context).push(
                         MaterialPageRoute(builder: (context) => ImageUpload()));
                   },
@@ -64,7 +56,7 @@ class _MenuState extends State<Menu> {
               ElevatedButton(
                   onPressed: () {
                     Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => MyHomePage(
+                        builder: (context) => CreateEventForm(
                               title: 'hy',
                             )));
                   },
