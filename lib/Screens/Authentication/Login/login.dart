@@ -11,7 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:social_door/Api/api.dart';
 import 'package:social_door/Api/google__api.dart';
 import 'package:social_door/Api/social_login.dart';
-import 'package:social_door/Providers/dataProvider.dart';
+import 'package:social_door/Screens/Authentication/dataProvider.dart';
 import 'package:social_door/Screens/Authentication/Signup/signUp.dart';
 import 'package:social_door/Screens/Authentication/forget%20password/forgetPassword.dart';
 import 'package:social_door/Screens/Home/home.dart';

@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:social_door/Api/api.dart';
 import 'package:social_door/Payment/paypalServices.dart';
-import 'package:social_door/Providers/dataProvider.dart';
+import 'package:social_door/Screens/Authentication/dataProvider.dart';
 import 'package:social_door/Screens/create_Event/create_event_provider.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:http/http.dart' as http;
@@ -167,7 +167,7 @@ class PaypalPaymentState extends State<PaypalPayment> {
             onTap: () => Navigator.pop(context),
           ),
         ),
-        body: checkoutUrl == ""
+        body: checkoutUrl == null
             ? CircularProgressIndicator()
             : WebView(
                 initialUrl: checkoutUrl,

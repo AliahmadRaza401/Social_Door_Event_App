@@ -1,21 +1,10 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:social_door/Api/Home/home_api.dart';
-import 'package:social_door/Api/api.dart';
-import 'package:social_door/Api/google__api.dart';
-import 'package:social_door/Api/postEvent.dart';
-import 'package:social_door/Model/createEvent.dart';
-import 'package:social_door/Model/getEvents.dart';
-import 'package:social_door/Payment/paypalPayment.dart';
-import 'package:social_door/Providers/dataProvider.dart';
-import 'package:social_door/Screens/Authentication/Login/login.dart';
 import 'package:social_door/Screens/Home/Home%20Widgets/header_home.dart';
 import 'package:social_door/Screens/Home/Home%20Widgets/postCard.dart';
 import 'package:social_door/Screens/Home/Home%20Widgets/tags_home.dart';
-import 'package:http/http.dart' as http;
+import 'package:social_door/Screens/Home/home_provider.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -23,21 +12,20 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  var token;
+  late HomeProvider _homeProvider;
 
- 
-
-  usertoken() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    token = prefs.getString('token');
-    print('token: $token');
-  }
-
+  var tagsList = [];
   @override
   void initState() {
     super.initState();
-    usertoken();
+    _homeProvider = Provider.of<HomeProvider>(context, listen: false);
+    // getData(context);
   }
+
+  // getData(BuildContext context) async {
+  //   var data = await _homeProvider.getAllTags(context);
+  //   print('tagsList: $data');
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -48,8 +36,20 @@ class _HomeState extends State<Home> {
             children: [
               header(context),
               homeTags(context),
+              ListView(
+                shrinkWrap: true,
+                physics: ClampingScrollPhysics(),
+                children: [
+                  ListView.builder(
+                      shrinkWrap: true,
+                      physics: ClampingScrollPhysics(),
+                      itemCount: tagsList.length == null ? 0 : tagsList.length,
+                      itemBuilder: (context, i) {
+                        return Text(tagsList[i].title);
+                      })
+                ],
+              ),
               PostCard(),
-              
             ],
           ),
         ),

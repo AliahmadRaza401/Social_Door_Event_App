@@ -8,7 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:social_door/Api/api.dart';
 import 'package:social_door/Model/createEvent.dart';
 import 'package:social_door/Payment/paypalPayment.dart';
-import 'package:social_door/Providers/dataProvider.dart';
+import 'package:social_door/Screens/Authentication/dataProvider.dart';
 import 'package:social_door/Screens/create_Event/Image_upload.dart';
 import 'package:social_door/Screens/create_Event/create_event_provider.dart';
 import 'package:social_door/Screens/create_Event/create_event_widget.dart';
@@ -31,7 +31,6 @@ class _CreateEventFormState extends State<CreateEventForm> {
   TextEditingController title = TextEditingController();
   TextEditingController categorey = TextEditingController();
   TextEditingController volNumber = TextEditingController();
-  TextEditingController host = TextEditingController();
   TextEditingController userIns = TextEditingController();
   TextEditingController eventcharges = TextEditingController();
   TextEditingController type = TextEditingController();
@@ -73,8 +72,7 @@ class _CreateEventFormState extends State<CreateEventForm> {
     // TODO: implement initState
     super.initState();
     createEvent(context);
-
-    // _getCurrentLocation();
+    _getCurrentLocation();
     _createEventProvider =
         Provider.of<CreateEventProvider>(context, listen: false);
     _createEventProvider.deviceDetails();
@@ -106,47 +104,49 @@ class _CreateEventFormState extends State<CreateEventForm> {
   }
 
   createMyEvent() {
-    print("cl;ick");
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (BuildContext context) => PaypalPayment(
-          totalAmount: 1,
-          onFinish: (number) async {
-            // payment done
-            print('order id: ' + number);
-            CommomWidget().showAlertDialog(context, "payment Done");
-          },
-        ),
-      ),
-    );
+    print("createMyEvent");
 
-    _createEventProvider.title = title.text.toString();
-    _createEventProvider.categorey = categorey.text.toString();
-    _createEventProvider.city = city.text.toString();
-    _createEventProvider.cordinates = _cordinates;
-    _createEventProvider.date = hostedDate;
-    _createEventProvider.startTime = startTime;
-    _createEventProvider.endTime = endTime;
-    _createEventProvider.description = description.text.toString();
-    _createEventProvider.email = email.text.toString();
-    _createEventProvider.endTime = endTime.text.toString();
-    _createEventProvider.eventcharges = eventcharges.text.toString();
-    _createEventProvider.floor = floor.text.toString();
-    _createEventProvider.home = home.text.toString();
-    _createEventProvider.host = host.text.toString();
-    _createEventProvider.postelCode = postelCode.text.toString();
-    _createEventProvider.phone = phone.text.toString();
-    _createEventProvider.startTime = startTime.text.toString();
-    _createEventProvider.street = street.text.toString();
-    _createEventProvider.type = type.text.toString();
-    _createEventProvider.userIns = userIns.text.toString();
-    _createEventProvider.volNumber = volNumber.text.toString();
-    _createEventProvider.selectedAmentites = selectedAmentites;
-    _createEventProvider.selectedCencelPolicy = selectedCencelPolicy;
-    _createEventProvider.selectedPrefrences = selectedPrefrences;
-    _createEventProvider.selectedRule = selectedRule;
+    setState(() {
+      _createEventProvider.title = title.text.toString();
+      _createEventProvider.categorey = categorey.text.toString();
+      _createEventProvider.city = city.text.toString();
+      _createEventProvider.cordinates = _cordinates;
+      _createEventProvider.date = hostedDate;
+      _createEventProvider.startTime = startTime;
+      _createEventProvider.endTime = endTime;
+      _createEventProvider.description = description.text.toString();
+      _createEventProvider.email = email.text.toString();
+      _createEventProvider.endTime = endTime;
+      _createEventProvider.eventcharges = eventcharges.text.toString();
+      _createEventProvider.floor = floor.text.toString();
+      _createEventProvider.home = home.text.toString();
+      _createEventProvider.postelCode = postelCode.text.toString();
+      _createEventProvider.phone = phone.text.toString();
+      _createEventProvider.startTime = startTime;
+      _createEventProvider.street = street.text.toString();
+      _createEventProvider.type = type.text.toString();
+      _createEventProvider.userIns = userIns.text.toString();
+      _createEventProvider.volNumber = volNumber.text.toString();
+      _createEventProvider.selectedAmentites = selectedAmentites;
+      _createEventProvider.selectedCencelPolicy = selectedCencelPolicy;
+      _createEventProvider.selectedPrefrences = selectedPrefrences;
+      _createEventProvider.selectedRule = selectedRule;
+      _createEventProvider.cordinates = _cordinates;
+    });
 
     _createEventProvider.addEvent(context);
+    // Navigator.of(context).push(
+    //   MaterialPageRoute(
+    //     builder: (BuildContext context) => PaypalPayment(
+    //       totalAmount: 1,
+    //       onFinish: (number) async {
+    //         // payment done
+    //         print('order id: ' + number);
+    //         CommomWidget().showAlertDialog(context, "payment Done");
+    //       },
+    //     ),
+    //   ),
+    // );
   }
 
   @override
@@ -258,10 +258,9 @@ class _CreateEventFormState extends State<CreateEventForm> {
                             setState(() {
                               selectedAmen = value!;
                               if (value == true) {
-                                selectedAmentites.add(eventAmentities[i].title);
+                                selectedAmentites.add(eventAmentities[i].id);
                               } else {
-                                selectedAmentites
-                                    .remove(eventAmentities[i].title);
+                                selectedAmentites.remove(eventAmentities[i].id);
                               }
                             });
                             print(selectedAmentites);
@@ -300,11 +299,9 @@ class _CreateEventFormState extends State<CreateEventForm> {
                         setState(() {
                           selectedPref = value!;
                           if (value == true) {
-                            selectedPrefrences
-                                .add(eventPrefrence[i].prefrenceValue);
+                            selectedPrefrences.add(eventPrefrence[i].id);
                           } else {
-                            selectedPrefrences
-                                .remove(eventPrefrence[i].prefrenceValue);
+                            selectedPrefrences.remove(eventPrefrence[i].id);
                           }
                         });
                         print(selectedPrefrences);
@@ -342,9 +339,9 @@ class _CreateEventFormState extends State<CreateEventForm> {
                         setState(() {
                           selectedRul = value!;
                           if (value == true) {
-                            selectedRule.add(eventRule[i].title);
+                            selectedRule.add(eventRule[i].id);
                           } else {
-                            selectedRule.remove(eventRule[i].title);
+                            selectedRule.remove(eventRule[i].id);
                           }
                         });
                         print(selectedRule);
@@ -382,11 +379,10 @@ class _CreateEventFormState extends State<CreateEventForm> {
                         setState(() {
                           selectedcanp = value!;
                           if (value == true) {
-                            selectedCencelPolicy
-                                .add(eventCancelPolicy[i].title);
+                            selectedCencelPolicy.add(eventCancelPolicy[i].id);
                           } else {
                             selectedCencelPolicy
-                                .remove(eventCancelPolicy[i].title);
+                                .remove(eventCancelPolicy[i].id);
                           }
                         });
                         print(selectedCencelPolicy);

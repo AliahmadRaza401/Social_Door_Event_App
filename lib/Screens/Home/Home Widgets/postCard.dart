@@ -3,10 +3,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:image_stack/image_stack.dart';
 import 'package:provider/provider.dart';
-import 'package:social_door/Api/Home/home_api.dart';
 import 'package:social_door/Api/api.dart';
 import 'package:social_door/Model/getEvents.dart';
-import 'package:social_door/Providers/dataProvider.dart';
+import 'package:social_door/Screens/Authentication/dataProvider.dart';
 import 'package:http/http.dart' as http;
 
 class PostCard extends StatefulWidget {

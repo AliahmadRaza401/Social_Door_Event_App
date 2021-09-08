@@ -5,7 +5,7 @@ import 'dart:convert';
 
 import 'package:social_door/Api/api.dart';
 import 'package:social_door/Model/createEvent.dart';
-import 'package:social_door/Providers/dataProvider.dart';
+import 'package:social_door/Screens/Authentication/dataProvider.dart';
 
 class PostEventApi {
   // static Future<List<CreateEvent>> createEvent(BuildContext context) async {

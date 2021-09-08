@@ -2,12 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:social_door/Api/Home/home_api.dart';
+import 'package:social_door/Screens/Home/home_provider.dart';
 import 'package:social_door/Screens/OnBoarding/content.dart';
 
-
 Widget homeTags(context) {
-  var tags = HomeApi().getAllTags(context);
+  var tags = HomeProvider().getAllTags(context);
   return Container(
     margin: EdgeInsets.symmetric(
       vertical: 5,

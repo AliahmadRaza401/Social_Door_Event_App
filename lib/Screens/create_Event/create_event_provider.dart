@@ -2,13 +2,12 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:device_info/device_info.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 import 'package:provider/provider.dart';
 import 'package:social_door/Api/api.dart';
-import 'package:social_door/Model/createEvent.dart';
-import 'package:social_door/Providers/dataProvider.dart';
-import 'package:social_door/common_widget/commom_widget.dart';
-import 'package:flutter/services.dart';
+import 'package:social_door/Screens/Authentication/dataProvider.dart';
 
 class CreateEventProvider extends ChangeNotifier {
   late BuildContext context;
@@ -26,6 +25,7 @@ class CreateEventProvider extends ChangeNotifier {
   var selectedRule = [];
   var selectedCencelPolicy = [];
   var title;
+
   var categorey;
   var titleController;
   var volNumber;
@@ -40,108 +40,210 @@ class CreateEventProvider extends ChangeNotifier {
   var street;
   var floor;
   var city;
+
   var postelCode;
   var email;
   var phone;
   var description;
+
   var cordinates;
   var paymentInfo;
   var imagefile;
+//  'https://4cfa-154-192-195-15.ngrok.io/api/user/events/addEvent'
+  // var uri = Uri.parse(
+  //       'https://4cfa-154-192-195-15.ngrok.io/api/user/events/addEvent');
+  //   var request = http.MultipartRequest('POST', uri)
+  //     ..fields['user'] = 'nweiz@google.com'
+  //     ..files.add(await http.MultipartFile.fromPath(
+  //         'eventThumbNail', imagefile.path,
+  //         contentType: MediaType('application', 'x-tar')));
+  //   var response = await request.send();
+  //   if (response.statusCode == 200) print('Uploaded!');
+
+  var rule = ["610e54a2dba82c1c9e84f171"];
 
   Future<void> addEvent(BuildContext context) async {
-    try {
-      print(" ---------Ad Event------------------");
-      print('email: $email');
-      var token = Provider.of<DataProvider>(context, listen: false).token;
-      print('token: $token');
+    print('title: $title');
+    print('city: $city');
+    print('description: $description');
+    // var data = {
+    //   "title": "Tornonto New Year Party",
+    //   "category": "611209da00179061507ab19d",
+    //   "hostedDate": "2021-09-18",
+    //   "startTime": "2021-09-18",
+    //   "endTime": "2020-09-18",
+    //   "eventPhone": "+923069601630",
+    //   "eventEmailAddress": "fahad@gmail.com",
+    //   "eventCharges": 10,
+    //   "host": "60c8418d228b7b002258a4ea",
+    //   "volume": 100,
+    //   "rules": ["610e54a2dba82c1c9e84f171"],
+    //   "prefrences": ["610e53a17222e01ba915818d"],
+    //   "amenities": ["6112082700179061507ab199"],
+    //   "userInstructions": "User have to take drinks,umbrellas",
+    //   "cancellationPolicy": ["6112094900179061507ab19a"],
+    //   "venue": {
+    //     "type": "event",
+    //     "home": "123",
+    //     "street": "walkaway street",
+    //     "floor": 2,
+    //     "city": "Tornonto",
+    //     "postal_code": 54920,
+    //     "coordinates": 12
+    //   },
+    //   "description": "this is description",
+    //   "paypalToken": "654dgd65454ggd"
+    // };
 
-      http.Response _response = await http.post(
-        Uri.parse(Api().addEvent),
-        headers: {
-          'content-Type': 'application/json',
-          'Authorization': token,
-        },
-        body: jsonEncode({
-          'eventThumbNail': imagefile,
-          'data': {
-            'title': title,
-            'category': categorey,
-            'hostedDate': date,
-            'startTime': startTime,
-            'endTime': endTime,
-            'eventPhone': phone,
-            'eventEmailAddress': email,
-            'eventCharges': eventcharges,
-            'host': deviceID,
-            'volume': volNumber,
-            'rules': selectedRule,
-            'prefrences': selectedPrefrences,
-            'amenities': selectedAmentites,
-            'userInstructions': userIns,
-            'cancellationPolicy': selectedCencelPolicy,
-            'venue': {
-              'type': type,
-              'home': home,
-              'street': street,
-              'floor': floor,
-              'city': city,
-              'postal_code': postelCode,
-              'coordinates': cordinates,
-            },
-            'description': description,
-            'paypalToken': paymentInfo,
-          },
-        }),
-        //  jsonEncode({
-        //   'eventThumbNail': imagefile,
-        //   'data': {
-        //     'title': title,
-        //     'category': categorey,
-        //     'hostedDate': "2020-09-18",
-        //     'startTime': "2020-09-18",
-        //     'endTime': "2020-09-18",
-        //     'eventPhone': "+923069601630",
-        //     'eventEmailAddress': email,
-        //     'eventCharges': eventcharges,
-        //     'host': deviceID,
-        //     'volume': volNumber,
-        //     'rules': selectedRule,
-        //     'prefrences': selectedPrefrences,
-        //     'amenities': selectedAmentites,
-        //     'userInstructions': userIns,
-        //     'cancellationPolicy': selectedCencelPolicy,
-        //     'venue': {
-        //       'type': type,
-        //       'home': home,
-        //       'street': street,
-        //       'floor': floor,
-        //       'city': city,
-        //       'postal_code': postelCode,
-        //       'coordinates': cordinates,
-        //     },
-        //     'description': description,
-        //     'paypalToken': "654dgd65454ggd",
-        //   },
-        // }),
-      );
-      print('Add Event _response------------ : $_response');
-      var result = jsonDecode(_response.body);
-      print('result-------: $result');
+    var data = {
+      'title': title,
+      'category': "611209da00179061507ab19d",
+      'hostedDate': date,
+      'startTime': "2021-09-18",
+      'endTime': "2021-09-18",
+      'eventPhone': phone,
+      'eventEmailAddress': email,
+      'eventCharges': eventcharges,
+      'host': deviceID,
+      'volume': volNumber,
+      'rules': selectedRule,
+      'prefrences': selectedPrefrences,
+      'amenities': selectedAmentites,
+      'userInstructions': userIns,
+      'cancellationPolicy': selectedCencelPolicy,
+      'venue': {
+        'type': type,
+        'home': home,
+        'street': street,
+        'floor': floor,
+        'city': city,
+        'postal_code': postelCode,
+        'coordinates': 123,
+      },
+      'description': description,
+      'paypalToken': paymentInfo
+    };
+    // var data = {
+    //   "title": title,
+    //   "category": "611209da00179061507ab19d",
+    //   "hostedDate": "2021-09-18",
+    //   "startTime": "2021-09-18",
+    //   "endTime": "2020-09-18",
+    //   "eventPhone": "+923069601630",
+    //   "eventEmailAddress": "fahad@gmail.com",
+    //   "eventCharges": 10,
+    //   "host": "60c8418d228b7b002258a4ea",
+    //   "volume": 100,
+    //   "rules": ["610e53a17222e01ba915818d"],
+    //   "prefrences": ["610e53a17222e01ba915818d"],
+    //   "amenities": ["610e53a17222e01ba915818d"],
+    //   "userInstructions": "User have to take drinks,umbrellas",
+    //   "cancellationPolicy": ["610e53a17222e01ba915818d"],
+    //   "venue": {
+    //     "type": "event",
+    //     "home": "123",
+    //     "street": "event",
+    //     "floor": "3",
+    //     "city": "event",
+    //     "postal_code": "123",
+    //     "coordinates": 12
+    //   },
+    //   "description": "this is description",
+    //   "paypalToken": "654dgd65454ggd"
+    // };
+    var token = Provider.of<DataProvider>(context, listen: false).token;
 
-      if (_response.statusCode == 200) {
-        print("Add event APi Success!");
+    var request = http.MultipartRequest(
+      'POST',
+      Uri.parse(Api().addEvent),
+    );
+    Map<String, String> headers = {
+      "Authorization": token,
+      "Content-type": "multipart/form-data"
+    };
+    request.files.add(
+      http.MultipartFile(
+        'eventThumbNail',
+        imagefile.readAsBytes().asStream(),
+        imagefile.lengthSync(),
+        filename: "eventThumbNail",
+        contentType: MediaType('image', 'jpeg'),
+      ),
+    );
+    request.headers.addAll(headers);
 
-        print(_response.body);
-
-        CommomWidget().showAlertDialog(context, "EventCreate Successfully");
-      } else {
-        print("Responce Fail");
-        CommomWidget().showAlertDialog(context, "Something Wrong");
-      }
-    } catch (e) {
-      return CommomWidget().showAlertDialog(context, e.toString());
-    }
+    request.fields.addAll({'data': jsonEncode(data)});
+    print("request: " + request.toString());
+    var res = await request.send();
+    print("This is response:" + res.reasonPhrase.toString());
+    return null;
   }
+
+  // Future<void> addEvent(BuildContext context) async {
+  //   try {
+  //     print(" ---------Ad Event------------------");
+
+  //     var token = Provider.of<DataProvider>(context, listen: false).token;
+  //     print('token: $token');
+  //     print("Image File:  ${imagefile.path}");
+
+  //     http.Response _response = await http.post(Uri.parse(
+  //             // Api().addEvent
+  //             'https://4cfa-154-192-195-15.ngrok.io/api/user/events/addEvent'),
+  //         headers: {
+  //           'content-Type': 'application/json',
+  //           'Authorization': token,
+  //         },
+  //         body: jsonEncode({
+  //           'eventThumbNail': "",
+  //           'data': {
+  //             "title": "Tornonto New Year Party",
+  //             "category": "611209da00179061507ab19d",
+  //             "hostedDate": "2021-09-18",
+  //             "startTime": "2021-09-18",
+  //             "endTime": "2020-09-18",
+  //             "eventPhone": "+923069601630",
+  //             "eventEmailAddress": "fahad@gmail.com",
+  //             "eventCharges": 10,
+  //             "host": "60c8418d228b7b002258a4ea",
+  //             "volume": 100,
+  //             "rules": ["610e54a2dba82c1c9e84f171"],
+  //             "prefrences": ["610e53a17222e01ba915818d"],
+  //             "amenities": ["6112082700179061507ab199"],
+  //             "userInstructions": "User have to take drinks,umbrellas",
+  //             "cancellationPolicy": ["6112094900179061507ab19a"],
+  //             "venue": {
+  //               "type": "event",
+  //               "home": "123",
+  //               "street": "walkaway street",
+  //               "floor": 2,
+  //               "city": "Tornonto",
+  //               "postal_code": 54920,
+  //               "coordinates": 12
+  //             },
+  //             "description": "this is description",
+  //             "paypalToken": "654dgd65454ggd"
+  //           }
+  //         }));
+  //     print('Add Event _response------------ : $_response');
+  //     var result = jsonDecode(_response.body);
+  //     print('result-------: $result');
+
+  //     if (_response.statusCode == 200) {
+  //       print("Add event APi Success!");
+
+  //       print(_response.body);
+
+  //       CommomWidget().showAlertDialog(context, "EventCreate Successfully");
+  //     } else {
+  //       print("Responce Fail");
+  //       print("Status code: ${_response.statusCode}");
+  //       CommomWidget().showAlertDialog(context, "Something Wrong");
+  //     }
+  //   } catch (e) {
+  //     return CommomWidget().showAlertDialog(context, e.toString());
+  //   }
+  // }
 
   Future<void> deviceDetails() async {
     final DeviceInfoPlugin deviceInfoPlugin = new DeviceInfoPlugin();
@@ -173,22 +275,32 @@ class CreateEventProvider extends ChangeNotifier {
       print('Failed to get platform version');
     }
   }
-
-  // createEvent(BuildContext context) async {
-  //   print('createEvent: Run------------------------------');
-
-  //   String url = Api().createEvent;
-  //   var token = Provider.of<DataProvider>(context, listen: false).token;
-  //   final responce = await http.post(Uri.parse(url), headers: {
-  //     'Content-Type': 'application/json',
-  //     'Authorization': token,
-  //   });
-
-  //   if (responce.statusCode == 200) {
-  //     var data = jsonDecode(responce.body);
-  //     createEventData = welcomeFromJson(responce.body);
-  //     return createEventData;
-  //   }
-  // }
-
 }
+
+
+   // 'title': title,
+              // 'category': categorey,
+              // 'hostedDate': date,
+              // 'startTime': "2021-09-18",
+              // 'endTime': "2021-09-18",
+              // 'eventPhone': phone,
+              // 'eventEmailAddress': email,
+              // 'eventCharges': eventcharges,
+              // 'host': "60c8418d228b7b002258a4ea",
+              // 'volume': volNumber,
+              // 'rules': "610e54a2dba82c1c9e84f171",
+              // 'prefrences': selectedPrefrences,
+              // 'amenities': selectedAmentites,
+              // 'userInstructions': userIns,
+              // 'cancellationPolicy': selectedCencelPolicy,
+              // 'venue': {
+              //   'type': type,
+              //   'home': home,
+              //   'street': street,
+              //   'floor': floor,
+              //   'city': city,
+              //   'postal_code': postelCode,
+              //   'coordinates': 123,
+              // },
+              // 'description': description,
+              // 'paypalToken': "sjdflkasd",

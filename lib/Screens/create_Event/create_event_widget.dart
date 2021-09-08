@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 }
 
 Widget inputField(BuildContext context, title,
-      TextEditingController controller, FormFieldValidator<String> validator) {
+      TextEditingController controller, FormFieldValidator<String> validator,) {
     return Container(
       width: MediaQuery.of(context).size.width * 0.8,
       decoration: BoxDecoration(
@@ -16,9 +16,6 @@ Widget inputField(BuildContext context, title,
         color: Color(0xffEEF3F8),
       ),
       child: TextFormField(
-        // onChanged: (value) {
-        //   onChange = value;
-        // },
         controller: controller,
         validator: validator,
         cursorColor: Color(0xffff5018),

@@ -267,6 +267,7 @@ class _ImageUploadState extends State<ImageUpload> {
   }
 
   /// Get from gallery
+
   _getFromGallery() async {
     PickedFile? pickedFile = await ImagePicker().getImage(
       source: ImageSource.gallery,
@@ -294,7 +295,6 @@ class _ImageUploadState extends State<ImageUpload> {
         imageFile = File(pickedFile.path);
         _createEventProvider.imagefile = imageFile;
       });
-
     }
   }
 }
