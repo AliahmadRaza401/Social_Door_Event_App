@@ -46,8 +46,14 @@ class CreateEventProvider extends ChangeNotifier {
   var phone;
   var description;
 
-  var cordinates;
-  var paymentInfo;
+  var latitude;
+  var longitude;
+  var paymentId;
+
+  var payerId;
+
+  var paypalToken;
+
   var imagefile;
 //  'https://4cfa-154-192-195-15.ngrok.io/api/user/events/addEvent'
   // var uri = Uri.parse(
@@ -63,9 +69,13 @@ class CreateEventProvider extends ChangeNotifier {
   var rule = ["610e54a2dba82c1c9e84f171"];
 
   Future<void> addEvent(BuildContext context) async {
-    print('title: $title');
-    print('city: $city');
-    print('description: $description');
+    print('startTime: $startTime');
+    print('endTime: $endTime');
+    print('paymentId: $paymentId');
+    print('payerId: $payerId');
+    print('paypalToken: $paypalToken');
+    print('longitude: $longitude');
+    print('latitude: $latitude');
     // var data = {
     //   "title": "Tornonto New Year Party",
     //   "category": "611209da00179061507ab19d",
@@ -99,12 +109,12 @@ class CreateEventProvider extends ChangeNotifier {
       'title': title,
       'category': "611209da00179061507ab19d",
       'hostedDate': date,
-      'startTime': "2021-09-18",
-      'endTime': "2021-09-18",
+      'startTime': startTime,
+      'endTime': endTime,
       'eventPhone': phone,
       'eventEmailAddress': email,
       'eventCharges': eventcharges,
-      'host': deviceID,
+      'host': '61053917790f5200227eb820',
       'volume': volNumber,
       'rules': selectedRule,
       'prefrences': selectedPrefrences,
@@ -118,10 +128,13 @@ class CreateEventProvider extends ChangeNotifier {
         'floor': floor,
         'city': city,
         'postal_code': postelCode,
-        'coordinates': 123,
+        'longitude': longitude,
+        'latitude': latitude
       },
       'description': description,
-      'paypalToken': paymentInfo
+      'paypalToken': paypalToken,
+      'payerId': payerId,
+      'paymentId': paymentId
     };
     // var data = {
     //   "title": title,
@@ -155,7 +168,9 @@ class CreateEventProvider extends ChangeNotifier {
 
     var request = http.MultipartRequest(
       'POST',
-      Uri.parse(Api().addEvent),
+      Uri.parse(
+          // Api().addEvent
+          'https://53e6-103-57-171-121.ngrok.io/api/user/events/addEvent'),
     );
     Map<String, String> headers = {
       "Authorization": token,
@@ -173,7 +188,6 @@ class CreateEventProvider extends ChangeNotifier {
     request.headers.addAll(headers);
 
     request.fields.addAll({'data': jsonEncode(data)});
-    print("request: " + request.toString());
     var res = await request.send();
     print("This is response:" + res.reasonPhrase.toString());
     return null;

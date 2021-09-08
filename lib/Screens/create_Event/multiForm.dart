@@ -62,7 +62,8 @@ class _CreateEventFormState extends State<CreateEventForm> {
   var hostedDate;
   var startTime;
   var endTime;
-  var _cordinates;
+  var latitude;
+  var longitude;
 
   late CreateEventProvider _createEventProvider;
   var createEventData;
@@ -110,7 +111,7 @@ class _CreateEventFormState extends State<CreateEventForm> {
       _createEventProvider.title = title.text.toString();
       _createEventProvider.categorey = categorey.text.toString();
       _createEventProvider.city = city.text.toString();
-      _createEventProvider.cordinates = _cordinates;
+      _createEventProvider.latitude = latitude;
       _createEventProvider.date = hostedDate;
       _createEventProvider.startTime = startTime;
       _createEventProvider.endTime = endTime;
@@ -131,22 +132,22 @@ class _CreateEventFormState extends State<CreateEventForm> {
       _createEventProvider.selectedCencelPolicy = selectedCencelPolicy;
       _createEventProvider.selectedPrefrences = selectedPrefrences;
       _createEventProvider.selectedRule = selectedRule;
-      _createEventProvider.cordinates = _cordinates;
+      _createEventProvider.longitude = longitude;
     });
 
-    _createEventProvider.addEvent(context);
-    // Navigator.of(context).push(
-    //   MaterialPageRoute(
-    //     builder: (BuildContext context) => PaypalPayment(
-    //       totalAmount: 1,
-    //       onFinish: (number) async {
-    //         // payment done
-    //         print('order id: ' + number);
-    //         CommomWidget().showAlertDialog(context, "payment Done");
-    //       },
-    //     ),
-    //   ),
-    // );
+    // _createEventProvider.addEvent(context);
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (BuildContext context) => PaypalPayment(
+          totalAmount: 1,
+          onFinish: (number) async {
+            // payment done
+            print('order id: ' + number);
+            CommomWidget().showAlertDialog(context, "payment Done");
+          },
+        ),
+      ),
+    );
   }
 
   @override
@@ -640,7 +641,7 @@ class _CreateEventFormState extends State<CreateEventForm> {
   Widget eventStartTime() {
     return TextButton(
         onPressed: () {
-          DatePicker.showTime12hPicker(context, showTitleActions: true,
+          DatePicker.showTimePicker(context, showTitleActions: true,
               onChanged: (date) {
             print('change $date in time zone ' +
                 date.timeZoneOffset.inHours.toString());
@@ -648,6 +649,7 @@ class _CreateEventFormState extends State<CreateEventForm> {
             print('confirm start Time : $date');
             setState(() {
               startTime = "${date.hour} : ${date.minute}";
+              // startTime = date;
             });
           }, currentTime: DateTime.now());
         },
@@ -660,7 +662,7 @@ class _CreateEventFormState extends State<CreateEventForm> {
   Widget eventEndTime() {
     return TextButton(
         onPressed: () {
-          DatePicker.showTime12hPicker(context, showTitleActions: true,
+          DatePicker.showTimePicker(context, showTitleActions: true,
               onChanged: (date) {
             print('change $date in time zone ' +
                 date.timeZoneOffset.inHours.toString());
@@ -668,6 +670,7 @@ class _CreateEventFormState extends State<CreateEventForm> {
             print('confirm End Time : $date');
             setState(() {
               endTime = "${date.hour} : ${date.minute}";
+              // endTime = date;
             });
           }, currentTime: DateTime.now());
         },
@@ -714,9 +717,11 @@ class _CreateEventFormState extends State<CreateEventForm> {
             forceAndroidLocationManager: true)
         .then((Position position) {
       setState(() {
-        _cordinates = position;
+        latitude = position.latitude;
+        print('latitude: $latitude');
+        longitude = position.longitude;
+        print('longitude: $longitude');
       });
-      print("----------Current Location----------------- + $_cordinates");
     }).catchError((e) {
       print(e);
     });

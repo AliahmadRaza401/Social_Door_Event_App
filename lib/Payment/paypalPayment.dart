@@ -177,8 +177,9 @@ class PaypalPaymentState extends State<PaypalPayment> {
                     final uri = Uri.parse(request.url);
                     final payerID = uri.queryParameters['PayerID'];
                     final data = uri.queryParameters;
-                    _createEventProvider.paymentInfo = data;
-                    print('paymentInfo: ${_createEventProvider.paymentInfo}');
+                    _createEventProvider.paymentId = data['paymentId'];
+                    _createEventProvider.payerId = data['PayerID'];
+                    _createEventProvider.paypalToken = data['token'];
                     _createEventProvider.addEvent(context);
                     // addEvent();
                     // Navigator.push(
