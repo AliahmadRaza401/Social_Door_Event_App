@@ -16,7 +16,7 @@ Widget homeTags(context) {
       future: tags,
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         if (!snapshot.hasData) {
-          return Center(child: Text("No Tags"));
+          return Center(child: Text("Loading..."));
         } else if (snapshot.hasData) {
           return SizedBox(
             height: MediaQuery.of(context).size.height * 0.05,

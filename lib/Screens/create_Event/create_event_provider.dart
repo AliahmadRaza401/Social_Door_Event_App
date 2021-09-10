@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:device_info/device_info.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
@@ -24,6 +23,7 @@ class CreateEventProvider extends ChangeNotifier {
   var selectedPrefrences = [];
   var selectedRule = [];
   var selectedCencelPolicy = [];
+  var selectedCategorey = [];
   var title;
 
   var categorey;
@@ -55,20 +55,13 @@ class CreateEventProvider extends ChangeNotifier {
   var paypalToken;
 
   var imagefile;
-//  'https://4cfa-154-192-195-15.ngrok.io/api/user/events/addEvent'
-  // var uri = Uri.parse(
-  //       'https://4cfa-154-192-195-15.ngrok.io/api/user/events/addEvent');
-  //   var request = http.MultipartRequest('POST', uri)
-  //     ..fields['user'] = 'nweiz@google.com'
-  //     ..files.add(await http.MultipartFile.fromPath(
-  //         'eventThumbNail', imagefile.path,
-  //         contentType: MediaType('application', 'x-tar')));
-  //   var response = await request.send();
-  //   if (response.statusCode == 200) print('Uploaded!');
 
   var rule = ["610e54a2dba82c1c9e84f171"];
 
   Future<void> addEvent(BuildContext context) async {
+    var authenticationID =
+        Provider.of<DataProvider>(context, listen: false).authenticationID;
+
     print('startTime: $startTime');
     print('endTime: $endTime');
     print('paymentId: $paymentId');
@@ -76,45 +69,19 @@ class CreateEventProvider extends ChangeNotifier {
     print('paypalToken: $paypalToken');
     print('longitude: $longitude');
     print('latitude: $latitude');
-    // var data = {
-    //   "title": "Tornonto New Year Party",
-    //   "category": "611209da00179061507ab19d",
-    //   "hostedDate": "2021-09-18",
-    //   "startTime": "2021-09-18",
-    //   "endTime": "2020-09-18",
-    //   "eventPhone": "+923069601630",
-    //   "eventEmailAddress": "fahad@gmail.com",
-    //   "eventCharges": 10,
-    //   "host": "60c8418d228b7b002258a4ea",
-    //   "volume": 100,
-    //   "rules": ["610e54a2dba82c1c9e84f171"],
-    //   "prefrences": ["610e53a17222e01ba915818d"],
-    //   "amenities": ["6112082700179061507ab199"],
-    //   "userInstructions": "User have to take drinks,umbrellas",
-    //   "cancellationPolicy": ["6112094900179061507ab19a"],
-    //   "venue": {
-    //     "type": "event",
-    //     "home": "123",
-    //     "street": "walkaway street",
-    //     "floor": 2,
-    //     "city": "Tornonto",
-    //     "postal_code": 54920,
-    //     "coordinates": 12
-    //   },
-    //   "description": "this is description",
-    //   "paypalToken": "654dgd65454ggd"
-    // };
+    print('selectedCategorey: $selectedCategorey');
+    print('authenticationID: $authenticationID');
 
     var data = {
       'title': title,
-      'category': "611209da00179061507ab19d",
+      'category': selectedCategorey,
       'hostedDate': date,
       'startTime': startTime,
       'endTime': endTime,
       'eventPhone': phone,
       'eventEmailAddress': email,
       'eventCharges': eventcharges,
-      'host': '61053917790f5200227eb820',
+      'host': authenticationID,
       'volume': volNumber,
       'rules': selectedRule,
       'prefrences': selectedPrefrences,
@@ -136,41 +103,14 @@ class CreateEventProvider extends ChangeNotifier {
       'payerId': payerId,
       'paymentId': paymentId
     };
-    // var data = {
-    //   "title": title,
-    //   "category": "611209da00179061507ab19d",
-    //   "hostedDate": "2021-09-18",
-    //   "startTime": "2021-09-18",
-    //   "endTime": "2020-09-18",
-    //   "eventPhone": "+923069601630",
-    //   "eventEmailAddress": "fahad@gmail.com",
-    //   "eventCharges": 10,
-    //   "host": "60c8418d228b7b002258a4ea",
-    //   "volume": 100,
-    //   "rules": ["610e53a17222e01ba915818d"],
-    //   "prefrences": ["610e53a17222e01ba915818d"],
-    //   "amenities": ["610e53a17222e01ba915818d"],
-    //   "userInstructions": "User have to take drinks,umbrellas",
-    //   "cancellationPolicy": ["610e53a17222e01ba915818d"],
-    //   "venue": {
-    //     "type": "event",
-    //     "home": "123",
-    //     "street": "event",
-    //     "floor": "3",
-    //     "city": "event",
-    //     "postal_code": "123",
-    //     "coordinates": 12
-    //   },
-    //   "description": "this is description",
-    //   "paypalToken": "654dgd65454ggd"
-    // };
+
     var token = Provider.of<DataProvider>(context, listen: false).token;
 
     var request = http.MultipartRequest(
       'POST',
-      Uri.parse(
-          // Api().addEvent
-          'https://53e6-103-57-171-121.ngrok.io/api/user/events/addEvent'),
+      Uri.parse(Api().addEvent
+          // 'https://53e6-103-57-171-121.ngrok.io/api/user/events/addEvent'
+          ),
     );
     Map<String, String> headers = {
       "Authorization": token,
@@ -193,102 +133,7 @@ class CreateEventProvider extends ChangeNotifier {
     return null;
   }
 
-  // Future<void> addEvent(BuildContext context) async {
-  //   try {
-  //     print(" ---------Ad Event------------------");
-
-  //     var token = Provider.of<DataProvider>(context, listen: false).token;
-  //     print('token: $token');
-  //     print("Image File:  ${imagefile.path}");
-
-  //     http.Response _response = await http.post(Uri.parse(
-  //             // Api().addEvent
-  //             'https://4cfa-154-192-195-15.ngrok.io/api/user/events/addEvent'),
-  //         headers: {
-  //           'content-Type': 'application/json',
-  //           'Authorization': token,
-  //         },
-  //         body: jsonEncode({
-  //           'eventThumbNail': "",
-  //           'data': {
-  //             "title": "Tornonto New Year Party",
-  //             "category": "611209da00179061507ab19d",
-  //             "hostedDate": "2021-09-18",
-  //             "startTime": "2021-09-18",
-  //             "endTime": "2020-09-18",
-  //             "eventPhone": "+923069601630",
-  //             "eventEmailAddress": "fahad@gmail.com",
-  //             "eventCharges": 10,
-  //             "host": "60c8418d228b7b002258a4ea",
-  //             "volume": 100,
-  //             "rules": ["610e54a2dba82c1c9e84f171"],
-  //             "prefrences": ["610e53a17222e01ba915818d"],
-  //             "amenities": ["6112082700179061507ab199"],
-  //             "userInstructions": "User have to take drinks,umbrellas",
-  //             "cancellationPolicy": ["6112094900179061507ab19a"],
-  //             "venue": {
-  //               "type": "event",
-  //               "home": "123",
-  //               "street": "walkaway street",
-  //               "floor": 2,
-  //               "city": "Tornonto",
-  //               "postal_code": 54920,
-  //               "coordinates": 12
-  //             },
-  //             "description": "this is description",
-  //             "paypalToken": "654dgd65454ggd"
-  //           }
-  //         }));
-  //     print('Add Event _response------------ : $_response');
-  //     var result = jsonDecode(_response.body);
-  //     print('result-------: $result');
-
-  //     if (_response.statusCode == 200) {
-  //       print("Add event APi Success!");
-
-  //       print(_response.body);
-
-  //       CommomWidget().showAlertDialog(context, "EventCreate Successfully");
-  //     } else {
-  //       print("Responce Fail");
-  //       print("Status code: ${_response.statusCode}");
-  //       CommomWidget().showAlertDialog(context, "Something Wrong");
-  //     }
-  //   } catch (e) {
-  //     return CommomWidget().showAlertDialog(context, e.toString());
-  //   }
-  // }
-
-  Future<void> deviceDetails() async {
-    final DeviceInfoPlugin deviceInfoPlugin = new DeviceInfoPlugin();
-    try {
-      if (Platform.isAndroid) {
-        var build = await deviceInfoPlugin.androidInfo;
-        deviceName = build.model;
-        deviceVersion = build.version.toString();
-        deviceID = build.androidId;
-
-        // setState(() {
-        //   deviceName = build.model;
-        //   deviceVersion = build.version.toString();
-        //   identifier = build.androidId;
-        // });
-        //UUID for Android
-      } else if (Platform.isIOS) {
-        var data = await deviceInfoPlugin.iosInfo;
-        deviceName = data.name;
-        deviceVersion = data.systemVersion;
-        deviceID = data.identifierForVendor;
-        // setState(() {
-        //   deviceName = data.name;
-        //   deviceVersion = data.systemVersion;
-        //   identifier = data.identifierForVendor;
-        // });//UUID for iOS
-      }
-    } on PlatformException {
-      print('Failed to get platform version');
-    }
-  }
+  
 }
 
 

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:social_door/Api/api.dart';
 import 'package:social_door/Model/createEvent.dart';
@@ -13,6 +14,8 @@ import 'package:social_door/Screens/create_Event/Image_upload.dart';
 import 'package:social_door/Screens/create_Event/create_event_provider.dart';
 import 'package:social_door/Screens/create_Event/create_event_widget.dart';
 import 'package:http/http.dart' as http;
+import 'package:social_door/Utils/loading_animation.dart';
+import 'package:social_door/Utils/socialAlertDialog.dart';
 import 'package:social_door/common_widget/commom_widget.dart';
 
 class CreateEventForm extends StatefulWidget {
@@ -26,6 +29,10 @@ class CreateEventForm extends StatefulWidget {
 
 class _CreateEventFormState extends State<CreateEventForm> {
   final _formKey = GlobalKey<FormState>();
+  final _addressKey = GlobalKey<FormState>();
+  final _contactKey = GlobalKey<FormState>();
+  final _descKey = GlobalKey<FormState>();
+
   String? selectedRole = 'Writer';
 
   TextEditingController title = TextEditingController();
@@ -53,37 +60,42 @@ class _CreateEventFormState extends State<CreateEventForm> {
   bool selectedPref = false;
   bool selectedRul = false;
   bool selectedcanp = false;
+  bool selectedcate = false;
 
   final selectedAmentites = [];
   final selectedPrefrences = [];
   final selectedRule = [];
   final selectedCencelPolicy = [];
+  final selectedCategorey = [];
 
   var hostedDate;
   var startTime;
   var endTime;
   var latitude;
   var longitude;
-
+  late DataProvider _dataProvider;
   late CreateEventProvider _createEventProvider;
   var createEventData;
-
+  int _groupValue = -1;
+  var data;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+
     createEvent(context);
+
     _getCurrentLocation();
     _createEventProvider =
         Provider.of<CreateEventProvider>(context, listen: false);
-    _createEventProvider.deviceDetails();
+    _dataProvider = Provider.of<DataProvider>(context, listen: false);
   }
 
   createEvent(BuildContext context) async {
     print('createEvent: Run------------------------------');
-
-    String url = Api().createEvent;
     var token = Provider.of<DataProvider>(context, listen: false).token;
+    String url = Api().createEvent;
+
     final responce = await http.post(Uri.parse(url), headers: {
       'Content-Type': 'application/json',
       'Authorization': token,
@@ -91,14 +103,16 @@ class _CreateEventFormState extends State<CreateEventForm> {
     if (responce.statusCode == 200) {
       var data = jsonDecode(responce.body);
       print('data: $data');
-      var createEventData = welcomeFromJson(responce.body);
-      eventRule = createEventData.eventCreationData.eventRulesList;
-      eventAmentities = createEventData.eventCreationData.eventAmenitiesList;
-      eventCategory = createEventData.eventCreationData.eventCategoryList;
-      eventCharges = createEventData.eventCreationData.eventChargesList;
-      eventPrefrence = createEventData.eventCreationData.eventPrefrencesList;
-      eventCancelPolicy =
-          createEventData.eventCreationData.eventCancellationPolicyList;
+      createEventData = welcomeFromJson(responce.body);
+      setState(() {
+        eventRule = createEventData.eventCreationData.eventRulesList;
+        eventAmentities = createEventData.eventCreationData.eventAmenitiesList;
+        eventCategory = createEventData.eventCreationData.eventCategoryList;
+        eventCharges = createEventData.eventCreationData.eventChargesList;
+        eventPrefrence = createEventData.eventCreationData.eventPrefrencesList;
+        eventCancelPolicy =
+            createEventData.eventCreationData.eventCancellationPolicyList;
+      });
     } else {
       print("Api not Working");
     }
@@ -132,6 +146,7 @@ class _CreateEventFormState extends State<CreateEventForm> {
       _createEventProvider.selectedCencelPolicy = selectedCencelPolicy;
       _createEventProvider.selectedPrefrences = selectedPrefrences;
       _createEventProvider.selectedRule = selectedRule;
+      _createEventProvider.selectedCategorey = selectedCategorey;
       _createEventProvider.longitude = longitude;
     });
 
@@ -176,19 +191,7 @@ class _CreateEventFormState extends State<CreateEventForm> {
                   },
                 ),
                 space(context),
-                inputField(
-                  context,
-                  "Categorey",
-                  categorey,
-                  (value) {
-                    if (value!.isEmpty) {
-                      return 'Categorey is required';
-                    }
-                    return null;
-                  },
-                ),
-                space(context),
-                inputField(
+                digitInputField(
                   context,
                   "Volumn Number",
                   volNumber,
@@ -212,7 +215,7 @@ class _CreateEventFormState extends State<CreateEventForm> {
                   },
                 ),
                 space(context),
-                inputField(
+                digitInputField(
                   context,
                   "Event Charges",
                   eventcharges,
@@ -235,46 +238,104 @@ class _CreateEventFormState extends State<CreateEventForm> {
         },
       ),
       CoolStep(
+        title: 'Select your Categorey',
+        subtitle: 'Choose one Categorey given list provided',
+        content: Container(
+          width: MediaQuery.of(context).size.width * .9,
+          child: Column(
+            children: [
+              createEventData == null
+                  ? loadingAnimation(context)
+                  : ListView(
+                      physics: ClampingScrollPhysics(),
+                      shrinkWrap: true,
+                      children: [
+                        ListView.builder(
+                            shrinkWrap: true,
+                            physics: ClampingScrollPhysics(),
+                            itemCount: eventCategory == null
+                                ? 0
+                                : eventCategory.length,
+                            itemBuilder: (context, i) {
+                              return RadioListTile(
+                                value: i,
+                                groupValue: _groupValue,
+                                onChanged: (val) {
+                                  setState(() {
+                                    _groupValue = i;
+
+                                    selectedCategorey.add(eventCategory[0].id);
+                                    print(
+                                        'selectedCategorey: $selectedCategorey');
+                                  });
+                                },
+                                title: Text(eventCategory[0].categoryName),
+                              );
+                            })
+                      ],
+                    ),
+            ],
+          ),
+        ),
+        validation: () {
+          // if (selectedCategorey.isEmpty) {
+          //   return alertDialog(context, "Required!",
+          //       'Please Click PREV select atleast one Categorey');
+          // }
+          // return null;
+        },
+      ),
+      CoolStep(
         title: 'Select your Amenities',
         subtitle: 'Choose a amenities',
         content: Container(
           width: MediaQuery.of(context).size.width * .9,
           child: Column(
             children: [
-              ListView(
-                physics: ClampingScrollPhysics(),
-                shrinkWrap: true,
-                children: [
-                  ListView.builder(
-                      shrinkWrap: true,
+              createEventData == null
+                  ? loadingAnimation(context)
+                  : ListView(
                       physics: ClampingScrollPhysics(),
-                      itemCount:
-                          eventAmentities == null ? 0 : eventAmentities.length,
-                      itemBuilder: (context, i) {
-                        return CheckboxListTile(
-                          controlAffinity: ListTileControlAffinity.leading,
-                          title: Text(eventAmentities[i].title),
-                          value: selectedAmen,
-                          onChanged: (value) {
-                            setState(() {
-                              selectedAmen = value!;
-                              if (value == true) {
-                                selectedAmentites.add(eventAmentities[i].id);
-                              } else {
-                                selectedAmentites.remove(eventAmentities[i].id);
-                              }
-                            });
-                            print(selectedAmentites);
-                          },
-                        );
-                      })
-                ],
-              ),
+                      shrinkWrap: true,
+                      children: [
+                        ListView.builder(
+                            shrinkWrap: true,
+                            physics: ClampingScrollPhysics(),
+                            itemCount: eventAmentities == null
+                                ? 0
+                                : eventAmentities.length,
+                            itemBuilder: (context, i) {
+                              return CheckboxListTile(
+                                controlAffinity:
+                                    ListTileControlAffinity.leading,
+                                title: Text(eventAmentities[i].title),
+                                value: selectedAmen,
+                                onChanged: (value) {
+                                  setState(() {
+                                    selectedAmen = value!;
+                                    if (value == true) {
+                                      selectedAmentites
+                                          .add(eventAmentities[i].id);
+                                    } else {
+                                      selectedAmentites
+                                          .remove(eventAmentities[i].id);
+                                    }
+                                  });
+                                  print(selectedAmentites);
+                                },
+                              );
+                            })
+                      ],
+                    ),
             ],
           ),
         ),
         validation: () {
-          return null;
+          // if (selectedAmentites.isEmpty) {
+          //   return alertDialog(context, "Required!",
+          //       'Please Click PREV select atleast one Amentites');
+          // }
+          // return null;
         },
       ),
       CoolStep(
@@ -282,38 +343,46 @@ class _CreateEventFormState extends State<CreateEventForm> {
         subtitle: 'Choose a prefrences',
         content: Container(
           width: MediaQuery.of(context).size.width * .9,
-          child: ListView(
-            physics: ClampingScrollPhysics(),
-            shrinkWrap: true,
-            children: [
-              ListView.builder(
-                  shrinkWrap: true,
+          child: createEventData == null
+              ? loadingAnimation(context)
+              : ListView(
                   physics: ClampingScrollPhysics(),
-                  itemCount:
-                      eventAmentities == null ? 0 : eventAmentities.length,
-                  itemBuilder: (context, i) {
-                    return CheckboxListTile(
-                      controlAffinity: ListTileControlAffinity.leading,
-                      title: Text(eventPrefrence[i].prefrenceValue),
-                      value: selectedPref,
-                      onChanged: (value) {
-                        setState(() {
-                          selectedPref = value!;
-                          if (value == true) {
-                            selectedPrefrences.add(eventPrefrence[i].id);
-                          } else {
-                            selectedPrefrences.remove(eventPrefrence[i].id);
-                          }
-                        });
-                        print(selectedPrefrences);
-                      },
-                    );
-                  })
-            ],
-          ),
+                  shrinkWrap: true,
+                  children: [
+                    ListView.builder(
+                        shrinkWrap: true,
+                        physics: ClampingScrollPhysics(),
+                        itemCount: eventAmentities == null
+                            ? 0
+                            : eventAmentities.length,
+                        itemBuilder: (context, i) {
+                          return CheckboxListTile(
+                            controlAffinity: ListTileControlAffinity.leading,
+                            title: Text(eventPrefrence[i].prefrenceValue),
+                            value: selectedPref,
+                            onChanged: (value) {
+                              setState(() {
+                                selectedPref = value!;
+                                if (value == true) {
+                                  selectedPrefrences.add(eventPrefrence[i].id);
+                                } else {
+                                  selectedPrefrences
+                                      .remove(eventPrefrence[i].id);
+                                }
+                              });
+                              print(selectedPrefrences);
+                            },
+                          );
+                        })
+                  ],
+                ),
         ),
         validation: () {
-          return null;
+          // if (selectedPrefrences.isEmpty) {
+          //   return alertDialog(context, "Required!",
+          //       'Please Click PREV select atleast one Prefrences');
+          // }
+          // return null;
         },
       ),
       CoolStep(
@@ -321,39 +390,46 @@ class _CreateEventFormState extends State<CreateEventForm> {
         subtitle: 'Choose a rule',
         content: Container(
           width: MediaQuery.of(context).size.width * .9,
-          child: ListView(
-            physics: ClampingScrollPhysics(),
-            shrinkWrap: true,
-            children: [
-              ListView.builder(
-                  shrinkWrap: true,
+          child: createEventData == null
+              ? loadingAnimation(context)
+              : ListView(
                   physics: ClampingScrollPhysics(),
-                  itemCount:
-                      eventAmentities == null ? 0 : eventAmentities.length,
-                  itemBuilder: (context, i) {
-                    return CheckboxListTile(
-                      controlAffinity: ListTileControlAffinity.leading,
-                      title: Text(eventRule[i].title),
-                      subtitle: Text(eventRule[i].description),
-                      value: selectedRul,
-                      onChanged: (value) {
-                        setState(() {
-                          selectedRul = value!;
-                          if (value == true) {
-                            selectedRule.add(eventRule[i].id);
-                          } else {
-                            selectedRule.remove(eventRule[i].id);
-                          }
-                        });
-                        print(selectedRule);
-                      },
-                    );
-                  })
-            ],
-          ),
+                  shrinkWrap: true,
+                  children: [
+                    ListView.builder(
+                        shrinkWrap: true,
+                        physics: ClampingScrollPhysics(),
+                        itemCount: eventAmentities == null
+                            ? 0
+                            : eventAmentities.length,
+                        itemBuilder: (context, i) {
+                          return CheckboxListTile(
+                            controlAffinity: ListTileControlAffinity.leading,
+                            title: Text(eventRule[i].title),
+                            subtitle: Text(eventRule[i].description),
+                            value: selectedRul,
+                            onChanged: (value) {
+                              setState(() {
+                                selectedRul = value!;
+                                if (value == true) {
+                                  selectedRule.add(eventRule[i].id);
+                                } else {
+                                  selectedRule.remove(eventRule[i].id);
+                                }
+                              });
+                              print(selectedRule);
+                            },
+                          );
+                        })
+                  ],
+                ),
         ),
         validation: () {
-          return null;
+          // if (selectedRule.isEmpty) {
+          //   return alertDialog(context, "Required!",
+          //       'Please Click PREV select atleast one Role');
+          // }
+          // return null;
         },
       ),
       CoolStep(
@@ -361,40 +437,48 @@ class _CreateEventFormState extends State<CreateEventForm> {
         subtitle: 'Choose a Cancel Policy',
         content: Container(
           width: MediaQuery.of(context).size.width * .9,
-          child: ListView(
-            physics: ClampingScrollPhysics(),
-            shrinkWrap: true,
-            children: [
-              ListView.builder(
-                  shrinkWrap: true,
+          child: createEventData == null
+              ? loadingAnimation(context)
+              : ListView(
                   physics: ClampingScrollPhysics(),
-                  itemCount:
-                      eventAmentities == null ? 0 : eventAmentities.length,
-                  itemBuilder: (context, i) {
-                    return CheckboxListTile(
-                      controlAffinity: ListTileControlAffinity.leading,
-                      title: Text(eventCancelPolicy[i].title),
-                      subtitle: Text(eventCancelPolicy[i].description),
-                      value: selectedcanp,
-                      onChanged: (value) {
-                        setState(() {
-                          selectedcanp = value!;
-                          if (value == true) {
-                            selectedCencelPolicy.add(eventCancelPolicy[i].id);
-                          } else {
-                            selectedCencelPolicy
-                                .remove(eventCancelPolicy[i].id);
-                          }
-                        });
-                        print(selectedCencelPolicy);
-                      },
-                    );
-                  })
-            ],
-          ),
+                  shrinkWrap: true,
+                  children: [
+                    ListView.builder(
+                        shrinkWrap: true,
+                        physics: ClampingScrollPhysics(),
+                        itemCount: eventAmentities == null
+                            ? 0
+                            : eventAmentities.length,
+                        itemBuilder: (context, i) {
+                          return CheckboxListTile(
+                            controlAffinity: ListTileControlAffinity.leading,
+                            title: Text(eventCancelPolicy[i].title),
+                            subtitle: Text(eventCancelPolicy[i].description),
+                            value: selectedcanp,
+                            onChanged: (value) {
+                              setState(() {
+                                selectedcanp = value!;
+                                if (value == true) {
+                                  selectedCencelPolicy
+                                      .add(eventCancelPolicy[i].id);
+                                } else {
+                                  selectedCencelPolicy
+                                      .remove(eventCancelPolicy[i].id);
+                                }
+                              });
+                              print(selectedCencelPolicy);
+                            },
+                          );
+                        })
+                  ],
+                ),
         ),
         validation: () {
-          return null;
+          // if (selectedCencelPolicy.isEmpty) {
+          //   return alertDialog(context, "Required!",
+          //       'Please Click PREV select atleast one CencelPolicy');
+          // }
+          // return null;
         },
       ),
       CoolStep(
@@ -413,133 +497,148 @@ class _CreateEventFormState extends State<CreateEventForm> {
       CoolStep(
         title: 'Select your Address',
         subtitle: 'enter your address details',
-        content: Container(
-          width: MediaQuery.of(context).size.width * .9,
-          child: Column(
-            children: [
-              inputField(
-                context,
-                "Type",
-                type,
-                (value) {
-                  if (value!.isEmpty) {
-                    return 'type is required';
-                  }
-                  return null;
-                },
-              ),
-              space(context),
-              inputField(
-                context,
-                "home",
-                home,
-                (value) {
-                  if (value!.isEmpty) {
-                    return 'home is required';
-                  }
-                  return null;
-                },
-              ),
-              space(context),
-              inputField(
-                context,
-                "Street",
-                street,
-                (value) {
-                  if (value!.isEmpty) {
-                    return 'street is required';
-                  }
-                  return null;
-                },
-              ),
-              space(context),
-              inputField(
-                context,
-                "Floor",
-                floor,
-                (value) {
-                  if (value!.isEmpty) {
-                    return 'floor is required';
-                  }
-                  return null;
-                },
-              ),
-              space(context),
-              inputField(
-                context,
-                "city",
-                city,
-                (value) {
-                  if (value!.isEmpty) {
-                    return 'city is required';
-                  }
-                  return null;
-                },
-              ),
-              space(context),
-              inputField(
-                context,
-                "Postel Code",
-                postelCode,
-                (value) {
-                  if (value!.isEmpty) {
-                    return 'postel code is required';
-                  }
-                  return null;
-                },
-              ),
-              space(context),
-            ],
+        content: Form(
+          key: _addressKey,
+          child: Container(
+            width: MediaQuery.of(context).size.width * .9,
+            child: Column(
+              children: [
+                inputField(
+                  context,
+                  "Type",
+                  type,
+                  (value) {
+                    if (value!.isEmpty) {
+                      return 'type is required';
+                    }
+                    return null;
+                  },
+                ),
+                space(context),
+                digitInputField(
+                  context,
+                  "home",
+                  home,
+                  (value) {
+                    if (value!.isEmpty) {
+                      return 'home is required';
+                    }
+                    return null;
+                  },
+                ),
+                space(context),
+                inputField(
+                  context,
+                  "Street",
+                  street,
+                  (value) {
+                    if (value!.isEmpty) {
+                      return 'street is required';
+                    }
+                    return null;
+                  },
+                ),
+                space(context),
+                digitInputField(
+                  context,
+                  "Floor",
+                  floor,
+                  (value) {
+                    if (value!.isEmpty) {
+                      return 'floor is required';
+                    }
+                    return null;
+                  },
+                ),
+                space(context),
+                inputField(
+                  context,
+                  "city",
+                  city,
+                  (value) {
+                    if (value!.isEmpty) {
+                      return 'city is required';
+                    }
+                    return null;
+                  },
+                ),
+                space(context),
+                digitInputField(
+                  context,
+                  "Postel Code",
+                  postelCode,
+                  (value) {
+                    if (value!.isEmpty) {
+                      return 'postel code is required';
+                    }
+                    return null;
+                  },
+                ),
+                space(context),
+              ],
+            ),
           ),
         ),
         validation: () {
+          if (!_addressKey.currentState!.validate()) {
+            return 'Fill form correctly';
+          }
           return null;
         },
       ),
       CoolStep(
         title: 'Contact Details',
         subtitle: 'enter your contact details',
-        content: Container(
-          width: MediaQuery.of(context).size.width * .9,
-          child: Column(
-            children: [
-              emailInputField(
-                context,
-                "Email",
-                email,
-              ),
-              space(context),
-              inputField(
-                context,
-                "Phone Number",
-                phone,
-                (value) {
-                  if (value!.isEmpty) {
-                    return 'phone number is required';
-                  } else if (value.length < 11) {
-                    return 'Please enter valid phone';
-                  }
-                  return null;
-                },
-              ),
-              space(context),
-            ],
+        content: Form(
+          key: _contactKey,
+          child: Container(
+            width: MediaQuery.of(context).size.width * .9,
+            child: Column(
+              children: [
+                emailInputField(
+                  context,
+                  "Email",
+                  email,
+                ),
+                space(context),
+                inputField(
+                  context,
+                  "Phone Number",
+                  phone,
+                  (value) {
+                    if (value!.isEmpty) {
+                      return 'phone number is required';
+                    } else if (value.length < 11) {
+                      return 'Please enter valid phone';
+                    }
+                    return null;
+                  },
+                ),
+                space(context),
+              ],
+            ),
           ),
         ),
         validation: () {
+          if (!_contactKey.currentState!.validate()) {
+            return 'Fill form correctly';
+          }
           return null;
         },
       ),
       CoolStep(
         title: 'Description',
         subtitle: 'enter your details description',
-        content: Container(
-          width: MediaQuery.of(context).size.width * .9,
-          child: Column(
-            children: [
-              inputField(
+        content: Form(
+          key: _descKey,
+          child: Container(
+            alignment: Alignment.topCenter,
+            height: MediaQuery.of(context).size.height * 0.7,
+            // width: MediaQuery.of(context).size.width * .1,
+            child: Container(
+              child: descInputField(
                 context,
-                "Description",
+                "Write detail description here...",
                 description,
                 (value) {
                   if (value!.isEmpty) {
@@ -548,10 +647,13 @@ class _CreateEventFormState extends State<CreateEventForm> {
                   return null;
                 },
               ),
-            ],
+            ),
           ),
         ),
         validation: () {
+          if (!_descKey.currentState!.validate()) {
+            return 'Fill form correctly';
+          }
           return null;
         },
       ),
@@ -570,22 +672,30 @@ class _CreateEventFormState extends State<CreateEventForm> {
 
     final stepper = CoolStepper(
       showErrorSnackbar: false,
-      onCompleted: () {
-        print('Steps completed!');
-        createMyEvent();
-      },
+      onCompleted: stepComplete,
       steps: steps,
       config: CoolStepperConfig(
         backText: 'PREV',
+        headerColor: Color(0xff1A1A36),
+        titleTextStyle:
+            TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        subtitleTextStyle: TextStyle(color: Colors.white),
+        iconColor: Colors.white,
       ),
     );
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
+      // appBar: AppBar(
+      //   title: Text(widget.title),
+      // ),
       body: Container(
-        child: stepper,
+        color: Color(0xff1A1A36),
+        child: SafeArea(
+          child: Container(
+            color: Colors.white,
+            child: stepper,
+          ),
+        ),
       ),
     );
   }
@@ -725,5 +835,50 @@ class _CreateEventFormState extends State<CreateEventForm> {
     }).catchError((e) {
       print(e);
     });
+  }
+
+  // currentDate() {
+  //   var newFormat = DateFormat("yy-MM-dd");
+  //   return newFormat;
+  // }
+
+  stepComplete() {
+    DateTime now = DateTime.now();
+    var formatter = DateFormat('yyyy-MM-dd');
+    var formatted = formatter.format(now);
+    print('formatted: $formatted');
+
+    print('Steps completed!');
+    if (selectedCategorey.isEmpty) {
+      return alertDialog(
+          context, "Required!", 'Please select atleast one Categorey');
+    } else if (selectedCencelPolicy.isEmpty) {
+      return alertDialog(context, "Required!",
+          'Please Click PREV select atleast one CencelPolicy');
+    } else if (selectedAmentites.isEmpty) {
+      return alertDialog(
+          context, "Required!", 'Please select atleast one Amentites');
+    } else if (selectedPrefrences.isEmpty) {
+      return alertDialog(
+          context, "Required!", 'Please select atleast one Prefrences');
+    } else if (selectedRule.isEmpty) {
+      return alertDialog(
+          context, "Required!", 'Please select atleast one Rule');
+    } else if (_createEventProvider.imagefile == null) {
+      return alertDialog(
+          context, "Required!", 'Please select image for event Thumbnail');
+    }
+    //  else if (hostedDate < formatted) {
+    //   // if (startTime < endTime) {
+    //   //   return alertDialog(context, "Time is Wrong",
+    //   //       'Your Start Time must be greater then End Time');
+    //   // }
+
+    //   return alertDialog(
+    //       context, "Required!", 'Please Enter Hosted Date and Time');
+    // }
+    else {
+      createMyEvent();
+    }
   }
 }

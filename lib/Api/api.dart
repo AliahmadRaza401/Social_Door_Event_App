@@ -16,6 +16,8 @@ class Api {
     return BASE_URL + '/api/user/reset/$currentText';
   }
 
+  String authenticate = BASE_URL + '/api/user/authenticate';
+
   // Social Login Api's
   String loginGoogle = BASE_URL + "/api/user/socialLoginWithGoogle";
 

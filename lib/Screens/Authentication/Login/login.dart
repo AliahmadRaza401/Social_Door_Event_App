@@ -51,6 +51,7 @@ class _LoginState extends State<Login> {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       Provider.of<DataProvider>(context, listen: false).token =
           prefs.get('token');
+      Provider.of<DataProvider>(context, listen: false).authticate();
       Navigator.of(context)
           .push(MaterialPageRoute(builder: (context) => TabbarMain()));
     }
@@ -99,7 +100,7 @@ class _LoginState extends State<Login> {
           .push(MaterialPageRoute(builder: (context) => TabbarMain()));
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setString('token', token);
-      // saveBToken(token);
+      Provider.of<DataProvider>(context, listen: false).authticate();
       userLoginTrue();
     } else {
       if (data['password'] != null) {

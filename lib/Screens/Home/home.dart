@@ -36,19 +36,6 @@ class _HomeState extends State<Home> {
             children: [
               header(context),
               homeTags(context),
-              ListView(
-                shrinkWrap: true,
-                physics: ClampingScrollPhysics(),
-                children: [
-                  ListView.builder(
-                      shrinkWrap: true,
-                      physics: ClampingScrollPhysics(),
-                      itemCount: tagsList.length == null ? 0 : tagsList.length,
-                      itemBuilder: (context, i) {
-                        return Text(tagsList[i].title);
-                      })
-                ],
-              ),
               PostCard(),
             ],
           ),

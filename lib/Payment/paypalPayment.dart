@@ -1,14 +1,10 @@
-import 'dart:convert';
 import 'dart:core';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:social_door/Api/api.dart';
 import 'package:social_door/Payment/paypalServices.dart';
-import 'package:social_door/Screens/Authentication/dataProvider.dart';
 import 'package:social_door/Screens/create_Event/create_event_provider.dart';
+import 'package:social_door/Utils/loading_animation.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-import 'package:http/http.dart' as http;
 
 class PaypalPayment extends StatefulWidget {
   final Function onFinish;
@@ -43,6 +39,7 @@ class PaypalPaymentState extends State<PaypalPayment> {
   late String accessToken;
   PaypalServices services = PaypalServices();
   late CreateEventProvider _createEventProvider;
+  var res;
   @override
   void initState() {
     super.initState();
@@ -54,8 +51,7 @@ class PaypalPaymentState extends State<PaypalPayment> {
         final transactions = getOrderParams();
         // final transactions = widget.totalAmount;
 
-        final res =
-            await services.createPaypalPayment(transactions, accessToken);
+        res = await services.createPaypalPayment(transactions, accessToken);
         if (res != null) {
           print("res: $res");
           setState(() {
@@ -157,8 +153,7 @@ class PaypalPaymentState extends State<PaypalPayment> {
   @override
   Widget build(BuildContext context) {
     double totalAmount = widget.totalAmount;
-    print(checkoutUrl);
-    if (checkoutUrl != null) {
+    if (res != '') {
       return Scaffold(
         appBar: AppBar(
           backgroundColor: Color(0xff131941),
@@ -167,8 +162,11 @@ class PaypalPaymentState extends State<PaypalPayment> {
             onTap: () => Navigator.pop(context),
           ),
         ),
-        body: checkoutUrl == null
-            ? CircularProgressIndicator()
+        body: res == null
+            ? Container(
+                width: MediaQuery.of(context).size.width,
+                alignment: Alignment.center,
+                child: loadingAnimation(context))
             : WebView(
                 initialUrl: checkoutUrl,
                 javascriptMode: JavascriptMode.unrestricted,
@@ -226,9 +224,12 @@ class PaypalPaymentState extends State<PaypalPayment> {
           backgroundColor: Colors.black12,
           elevation: 0.0,
         ),
-        body: checkoutUrl == ""
-            ? CircularProgressIndicator()
-            : Center(child: Container(child: CircularProgressIndicator())),
+        body: res == null
+            ? Container(
+                width: MediaQuery.of(context).size.width,
+                alignment: Alignment.center,
+                child: loadingAnimation(context))
+            : Text("Oops! Please Try Again"),
       );
     }
   }
