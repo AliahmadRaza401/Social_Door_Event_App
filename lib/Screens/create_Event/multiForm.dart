@@ -81,10 +81,10 @@ class _CreateEventFormState extends State<CreateEventForm> {
   var currentYear;
   var currentmonth;
   var currentDay;
-  late int startHour;
-  late int startMint;
-  late int endHour;
-  late int endMint;
+  int startHour = 00;
+  int startMint = 00;
+  int endHour = 00;
+  int endMint = 00;
 
   @override
   void initState() {
@@ -165,7 +165,8 @@ class _CreateEventFormState extends State<CreateEventForm> {
 
     socialAlertDialog(
       context,
-      "Pay 1\$ Fee","For create event must pay 1\$ click Continue to proceed",
+      "Pay 1\$ Fee",
+      "For create event must pay 1\$ click Continue to proceed",
       PaypalPayment(
         totalAmount: 1,
         onFinish: (number) async {
@@ -658,7 +659,7 @@ class _CreateEventFormState extends State<CreateEventForm> {
           key: _descKey,
           child: Container(
             alignment: Alignment.topCenter,
-            height: MediaQuery.of(context).size.height * 0.7,
+            height: MediaQuery.of(context).size.height,
             // width: MediaQuery.of(context).size.width * .1,
             child: Container(
               child: descInputField(

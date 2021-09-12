@@ -85,7 +85,7 @@ class _PostCardState extends State<PostCard> {
 
   Widget eventCard(String title, String categoreyName, String rs, url) {
     return Container(
-      height: MediaQuery.of(context).size.height * 0.48,
+      height: MediaQuery.of(context).size.height * 0.5,
       width: MediaQuery.of(context).size.width * 0.9,
       margin: EdgeInsets.symmetric(
         horizontal: MediaQuery.of(context).size.width * 0.03,
