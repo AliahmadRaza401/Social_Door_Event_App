@@ -289,53 +289,53 @@ class _SignUpState extends State<SignUp> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Text(
-                          "Contact With",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Column(
-                              children: [
-                                Container(
-                                  width: 45,
-                                  height: 45,
-                                  margin: EdgeInsets.only(
-                                    right: 20,
-                                  ),
-                                  padding: EdgeInsets.all(10),
-                                  decoration: BoxDecoration(
-                                      color: Color(0xff80808E),
-                                      borderRadius: BorderRadius.circular(50)),
-                                  child: SvgPicture.asset(
-                                    "assets/svg/fb.svg",
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Column(
-                              children: [
-                                Container(
-                                  width: 45,
-                                  height: 45,
-                                  padding: EdgeInsets.all(10),
-                                  decoration: BoxDecoration(
-                                      color: Color(0xff80808E),
-                                      borderRadius: BorderRadius.circular(50)),
-                                  child: SvgPicture.asset(
-                                    "assets/svg/google.svg",
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
+                        // Text(
+                        //   "Contact With",
+                        //   style: TextStyle(color: Colors.white),
+                        // ),
+                        // SizedBox(
+                        //   height: 10,
+                        // ),
+                        // Row(
+                        //   mainAxisAlignment: MainAxisAlignment.center,
+                        //   children: [
+                        //     Column(
+                        //       children: [
+                        //         Container(
+                        //           width: 45,
+                        //           height: 45,
+                        //           margin: EdgeInsets.only(
+                        //             right: 20,
+                        //           ),
+                        //           padding: EdgeInsets.all(10),
+                        //           decoration: BoxDecoration(
+                        //               color: Color(0xff80808E),
+                        //               borderRadius: BorderRadius.circular(50)),
+                        //           child: SvgPicture.asset(
+                        //             "assets/svg/fb.svg",
+                        //             color: Colors.white,
+                        //           ),
+                        //         ),
+                        //       ],
+                        //     ),
+                        //     Column(
+                        //       children: [
+                        //         Container(
+                        //           width: 45,
+                        //           height: 45,
+                        //           padding: EdgeInsets.all(10),
+                        //           decoration: BoxDecoration(
+                        //               color: Color(0xff80808E),
+                        //               borderRadius: BorderRadius.circular(50)),
+                        //           child: SvgPicture.asset(
+                        //             "assets/svg/google.svg",
+                        //             color: Colors.white,
+                        //           ),
+                        //         ),
+                        //       ],
+                        //     ),
+                        //   ],
+                        // ),
                         SizedBox(
                           height: 10,
                         ),
@@ -377,7 +377,7 @@ class _SignUpState extends State<SignUp> {
                   ),
                 ),
                 SizedBox(
-                  height: 30,
+                  height: 10,
                 ),
               ],
             ),
