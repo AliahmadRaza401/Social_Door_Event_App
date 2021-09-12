@@ -78,6 +78,14 @@ class _CreateEventFormState extends State<CreateEventForm> {
   var createEventData;
   int _groupValue = -1;
   var data;
+  var currentYear;
+  var currentmonth;
+  var currentDay;
+  late int startHour;
+  late int startMint;
+  late int endHour;
+  late int endMint;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -89,6 +97,11 @@ class _CreateEventFormState extends State<CreateEventForm> {
     _createEventProvider =
         Provider.of<CreateEventProvider>(context, listen: false);
     _dataProvider = Provider.of<DataProvider>(context, listen: false);
+
+    currentYear = DateTime.now().year;
+    currentmonth = DateTime.now().month;
+    currentDay = DateTime.now().day;
+    print('currentDay: $currentDay');
   }
 
   createEvent(BuildContext context) async {
@@ -750,44 +763,162 @@ class _CreateEventFormState extends State<CreateEventForm> {
 
   Widget eventStartTime() {
     return TextButton(
-        onPressed: () {
-          DatePicker.showTimePicker(context, showTitleActions: true,
-              onChanged: (date) {
-            print('change $date in time zone ' +
-                date.timeZoneOffset.inHours.toString());
-          }, onConfirm: (date) {
-            print('confirm start Time : $date');
-            setState(() {
-              startTime = "${date.hour} : ${date.minute}";
-              // startTime = date;
-            });
-          }, currentTime: DateTime.now());
-        },
-        child: Text(
-          'Start Time AM/PM',
-          style: TextStyle(color: Colors.blue),
-        ));
+      onPressed: () {
+        DatePicker.showTimePicker(context,
+            showTitleActions: true,
+            theme: DatePickerTheme(
+                headerColor: Colors.orange,
+                backgroundColor: Color(0xff1A1A36),
+                itemStyle: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 19),
+                doneStyle: TextStyle(color: Colors.white, fontSize: 18)),
+            onChanged: (date) {
+          print('change $date in time zone ' +
+              date.timeZoneOffset.inHours.toString());
+        }, onConfirm: (date) {
+          print('confirm start Time : $date');
+          setState(() {
+            startHour = date.hour;
+            startMint = date.minute;
+            startTime = "${date.hour} : ${date.minute}";
+            // startTime = date;
+          });
+        }, currentTime: DateTime.now());
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(15),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.5),
+              spreadRadius: 5,
+              blurRadius: 7,
+              offset: Offset(0, 3), // changes position of shadow
+            ),
+          ],
+        ),
+        margin: EdgeInsets.symmetric(
+            vertical: MediaQuery.of(context).size.height * 0.02),
+        padding: EdgeInsets.symmetric(
+            vertical: MediaQuery.of(context).size.height * 0.02),
+        width: MediaQuery.of(context).size.width * 0.7,
+        // height: MediaQuery.of(context).size.height * 0.06,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Text("Start Time",
+                    style: TextStyle(
+                        color: Color(0xffff5018),
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold)),
+                Icon(
+                  Icons.access_time,
+                  color: Color(0xffff5018),
+                )
+              ],
+            ),
+            Divider(),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(startTime == null ? "" : startTime,
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    )),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget eventEndTime() {
     return TextButton(
-        onPressed: () {
-          DatePicker.showTimePicker(context, showTitleActions: true,
-              onChanged: (date) {
-            print('change $date in time zone ' +
-                date.timeZoneOffset.inHours.toString());
-          }, onConfirm: (date) {
-            print('confirm End Time : $date');
-            setState(() {
-              endTime = "${date.hour} : ${date.minute}";
-              // endTime = date;
-            });
-          }, currentTime: DateTime.now());
-        },
-        child: Text(
-          ' End Time AM/PM',
-          style: TextStyle(color: Colors.blue),
-        ));
+      onPressed: () {
+        DatePicker.showTimePicker(context,
+            showTitleActions: true,
+            theme: DatePickerTheme(
+                headerColor: Colors.orange,
+                backgroundColor: Color(0xff1A1A36),
+                itemStyle: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 19),
+                doneStyle: TextStyle(color: Colors.white, fontSize: 18)),
+            onChanged: (date) {
+          print('change $date in time zone ' +
+              date.timeZoneOffset.inHours.toString());
+        }, onConfirm: (date) {
+          print('confirm End Time : $date');
+          setState(() {
+            endHour = date.hour;
+            endMint = date.minute;
+            endTime = "${date.hour} : ${date.minute}";
+            // endTime = date;
+          });
+        }, currentTime: DateTime.now());
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(15),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.5),
+              spreadRadius: 5,
+              blurRadius: 7,
+              offset: Offset(0, 3), // changes position of shadow
+            ),
+          ],
+        ),
+        padding: EdgeInsets.symmetric(
+            vertical: MediaQuery.of(context).size.height * 0.02),
+        width: MediaQuery.of(context).size.width * 0.7,
+        // height: MediaQuery.of(context).size.height * 0.06,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Text("End Time",
+                    style: TextStyle(
+                        color: Color(0xffff5018),
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold)),
+                Icon(
+                  Icons.access_time,
+                  color: Color(0xffff5018),
+                )
+              ],
+            ),
+            Divider(),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(endTime == null ? "" : endTime,
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    )),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget eventDate() {
@@ -795,16 +926,16 @@ class _CreateEventFormState extends State<CreateEventForm> {
         onPressed: () {
           DatePicker.showDatePicker(context,
               showTitleActions: true,
-              minTime: DateTime(2015, 3, 5),
-              maxTime: DateTime(2021, 6, 7),
+              minTime: DateTime(currentYear, currentmonth, currentDay),
+              maxTime: DateTime(2025, 1, 7),
               theme: DatePickerTheme(
                   headerColor: Colors.orange,
-                  backgroundColor: Colors.blue,
+                  backgroundColor: Color(0xff1A1A36),
                   itemStyle: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
-                      fontSize: 18),
-                  doneStyle: TextStyle(color: Colors.white, fontSize: 16)),
+                      fontSize: 19),
+                  doneStyle: TextStyle(color: Colors.white, fontSize: 18)),
               onChanged: (date) {
             print('change $date in time zone ' +
                 date.timeZoneOffset.inHours.toString());
@@ -815,9 +946,55 @@ class _CreateEventFormState extends State<CreateEventForm> {
             });
           }, currentTime: DateTime.now(), locale: LocaleType.en);
         },
-        child: Text(
-          'show date picker',
-          style: TextStyle(color: Colors.blue),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(15),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                spreadRadius: 5,
+                blurRadius: 7,
+                offset: Offset(0, 3), // changes position of shadow
+              ),
+            ],
+          ),
+          padding: EdgeInsets.symmetric(
+              vertical: MediaQuery.of(context).size.height * 0.02),
+          width: MediaQuery.of(context).size.width * 0.7,
+          // height: MediaQuery.of(context).size.height * 0.06,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Text("Select Date",
+                      style: TextStyle(
+                          color: Color(0xffff5018),
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold)),
+                  Icon(
+                    Icons.calendar_today,
+                    color: Color(0xffff5018),
+                  )
+                ],
+              ),
+              Divider(),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(hostedDate == null ? "" : hostedDate,
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      )),
+                ],
+              ),
+            ],
+          ),
         ));
   }
 
@@ -843,12 +1020,12 @@ class _CreateEventFormState extends State<CreateEventForm> {
   // }
 
   stepComplete() {
-    DateTime now = DateTime.now();
-    var formatter = DateFormat('yyyy-MM-dd');
-    var formatted = formatter.format(now);
-    print('formatted: $formatted');
-
     print('Steps completed!');
+    print("st + $startHour");
+    print("sm + $startMint");
+    print("et + $endHour");
+    print("em + $endMint");
+
     if (selectedCategorey.isEmpty) {
       return alertDialog(
           context, "Required!", 'Please select atleast one Categorey');
@@ -864,20 +1041,17 @@ class _CreateEventFormState extends State<CreateEventForm> {
     } else if (selectedRule.isEmpty) {
       return alertDialog(
           context, "Required!", 'Please select atleast one Rule');
-    } else if (_createEventProvider.imagefile == null) {
+    } else if (data == null) {
+      return alertDialog(context, "Required!!", 'Please enter event Date');
+    }
+    //  else if (startHour <= endHour) {
+    //   return alertDialog(
+    //       context, "Wrong!", 'your EndTime is smaller from StartTime');
+    // }
+    else if (_createEventProvider.imagefile == null) {
       return alertDialog(
           context, "Required!", 'Please select image for event Thumbnail');
-    }
-    //  else if (hostedDate < formatted) {
-    //   // if (startTime < endTime) {
-    //   //   return alertDialog(context, "Time is Wrong",
-    //   //       'Your Start Time must be greater then End Time');
-    //   // }
-
-    //   return alertDialog(
-    //       context, "Required!", 'Please Enter Hosted Date and Time');
-    // }
-    else {
+    } else {
       createMyEvent();
     }
   }

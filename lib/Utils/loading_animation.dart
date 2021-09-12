@@ -6,7 +6,7 @@ Widget loadingAnimation(BuildContext context) {
     // alignment: Alignment.center,
     height: MediaQuery.of(context).size.height,
     child: LoadingBouncingGrid.square(
-      // size: MediaQuery.of(context).size.height * .05,
+      size: MediaQuery.of(context).size.height * .04,
       backgroundColor: Color(0xff131941),
     ),
   );

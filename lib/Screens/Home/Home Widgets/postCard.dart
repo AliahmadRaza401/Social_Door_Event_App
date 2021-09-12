@@ -85,7 +85,7 @@ class _PostCardState extends State<PostCard> {
 
   Widget eventCard(String title, String categoreyName, String rs, url) {
     return Container(
-      height: MediaQuery.of(context).size.height * 0.45,
+      height: MediaQuery.of(context).size.height * 0.48,
       width: MediaQuery.of(context).size.width * 0.9,
       margin: EdgeInsets.symmetric(
         horizontal: MediaQuery.of(context).size.width * 0.03,
@@ -130,7 +130,7 @@ class _PostCardState extends State<PostCard> {
 
                 // right: 10.0,
                 child: Container(
-                    height: MediaQuery.of(context).size.height * 0.07,
+                    height: MediaQuery.of(context).size.height * 0.05,
                     width: MediaQuery.of(context).size.width * 0.08,
                     decoration: BoxDecoration(
                         color: Colors.white,
@@ -140,7 +140,10 @@ class _PostCardState extends State<PostCard> {
                               color: Colors.grey.withOpacity(0.15),
                               spreadRadius: 3),
                         ]),
+                    padding: EdgeInsets.only(top: 5),
                     child: Column(
+                      // mainAxisAlignment: MainAxisAlignment.center,
+                      // crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
                         Text(
                           "26",
@@ -162,7 +165,7 @@ class _PostCardState extends State<PostCard> {
             ],
           ),
           Positioned(
-            top: MediaQuery.of(context).size.height * 0.28,
+            top: MediaQuery.of(context).size.height * 0.29,
             left: 40.0,
             child: Container(
               width: MediaQuery.of(context).size.width * 0.8,

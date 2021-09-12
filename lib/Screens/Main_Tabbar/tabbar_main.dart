@@ -16,7 +16,9 @@ class _TabbarMainState extends State<TabbarMain> {
 
   final _widgetOptions = [
     Home(),
-    CreateEventForm(title: '',),
+    CreateEventForm(
+      title: '',
+    ),
     Text('Index 2: Events'),
     Text('Index 3: Profile'),
     Menu(),
@@ -59,7 +61,7 @@ class _TabbarMainState extends State<TabbarMain> {
                   color: _selectedIndex != 1 ? Color(0xff626275) : null,
                 ),
                 title: Text(
-                  'Create Event',
+                  'Event',
                   style: TextStyle(
                     color: _selectedIndex != 1 ? Color(0xff626275) : null,
                   ),

@@ -221,10 +221,39 @@ class _ImageUploadState extends State<ImageUpload> {
             ],
           )
         : Container(
-            child: Image.file(
-              imageFile,
-              fit: BoxFit.cover,
-              width: MediaQuery.of(context).size.width * .2,
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          imageFile = null as File;
+                          print('imageFile: $imageFile');
+                        });
+                      },
+                      child: Icon(
+                        Icons.cancel_outlined,
+                        color: Color(0xffff5018),
+                        size: MediaQuery.of(context).size.width * .1,
+                      ),
+                    )
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      child: Image.file(
+                        imageFile,
+                        fit: BoxFit.cover,
+                        width: MediaQuery.of(context).size.width * .8,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           );
     //  Scaffold(
