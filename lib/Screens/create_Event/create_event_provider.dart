@@ -7,6 +7,8 @@ import 'package:http_parser/http_parser.dart';
 import 'package:provider/provider.dart';
 import 'package:social_door/Api/api.dart';
 import 'package:social_door/Screens/Authentication/dataProvider.dart';
+import 'package:social_door/Screens/Home/home.dart';
+import 'package:social_door/Utils/socialAlertDialog.dart';
 
 class CreateEventProvider extends ChangeNotifier {
   late BuildContext context;
@@ -130,10 +132,17 @@ class CreateEventProvider extends ChangeNotifier {
     request.fields.addAll({'data': jsonEncode(data)});
     var res = await request.send();
     print("This is response:" + res.reasonPhrase.toString());
+    if (res.reasonPhrase.toString() == "Created") {
+      socialAlertDialog(
+          context,
+          "Event Create Successfully!",
+          "congrates! your event is created wait for admin approval. Click continue goto All Events",
+          Home());
+    } else {
+      alertDialog(context, "Failed!", "something wrong please try");
+    }
     return null;
   }
-
-  
 }
 
 

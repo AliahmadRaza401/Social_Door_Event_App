@@ -155,7 +155,8 @@ class _LoginState extends State<Login> {
         });
       } else {
         print("Login UnSuccess");
-        socialAlertDialog(context, SignUp());
+        socialAlertDialog(context, "SignIn Failed!",
+            "Please click continue to create an account", SignUp());
         setState(() {
           _socialLoading = false;
         });
@@ -217,7 +218,8 @@ class _LoginState extends State<Login> {
         });
       } else {
         print("Login UnSuccess");
-        socialAlertDialog(context, SignUp());
+        socialAlertDialog(context, "SignIn Failed!",
+            "Please click continue to create an account", SignUp());
         setState(() {
           _socialLoading = false;
         });

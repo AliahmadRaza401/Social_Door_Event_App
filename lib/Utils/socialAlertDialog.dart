@@ -34,6 +34,8 @@ alertDialog(BuildContext context, title, subtitle) {
 
 socialAlertDialog(
   BuildContext context,
+  title,
+  description,
   goto,
 ) {
   // set up the buttons
@@ -44,6 +46,7 @@ socialAlertDialog(
     },
   );
   Widget continueButton = FlatButton(
+    
     child: Text("Continue"),
     onPressed: () {
       Navigator.of(context).push(MaterialPageRoute(builder: (context) => goto));
@@ -51,8 +54,8 @@ socialAlertDialog(
   );
   // set up the AlertDialog
   AlertDialog alert = AlertDialog(
-    title: Text("Login Failed!"),
-    content: Text("Please click Next to Continue"),
+    title: Text(title),
+    content: Text(description),
     actions: [
       cancelButton,
       continueButton,

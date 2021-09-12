@@ -163,19 +163,31 @@ class _CreateEventFormState extends State<CreateEventForm> {
       _createEventProvider.longitude = longitude;
     });
 
-    // _createEventProvider.addEvent(context);
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (BuildContext context) => PaypalPayment(
-          totalAmount: 1,
-          onFinish: (number) async {
-            // payment done
-            print('order id: ' + number);
-            CommomWidget().showAlertDialog(context, "payment Done");
-          },
-        ),
+    socialAlertDialog(
+      context,
+      "Pay 1\$ Fee","For create event must pay 1\$ click Continue to proceed",
+      PaypalPayment(
+        totalAmount: 1,
+        onFinish: (number) async {
+          // payment done
+          print('order id: ' + number);
+          CommomWidget().showAlertDialog(context, "payment Done");
+        },
       ),
     );
+    // Navigator.of(context).push(
+    //   MaterialPageRoute(
+    //     builder: (BuildContext context) =>
+    //      PaypalPayment(
+    //       totalAmount: 1,
+    //       onFinish: (number) async {
+    //         // payment done
+    //         print('order id: ' + number);
+    //         CommomWidget().showAlertDialog(context, "payment Done");
+    //       },
+    //     ),
+    //   ),
+    // );
   }
 
   @override
@@ -1041,7 +1053,7 @@ class _CreateEventFormState extends State<CreateEventForm> {
     } else if (selectedRule.isEmpty) {
       return alertDialog(
           context, "Required!", 'Please select atleast one Rule');
-    } else if (data == null) {
+    } else if (hostedDate == null) {
       return alertDialog(context, "Required!!", 'Please enter event Date');
     }
     //  else if (startHour <= endHour) {
