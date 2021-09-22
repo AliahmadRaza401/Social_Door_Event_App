@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:gradient_bottom_navigation_bar/gradient_bottom_navigation_bar.dart';
 import 'package:social_door/Screens/Home/home.dart';
 import 'package:social_door/Screens/Menu/menu.dart';
-import 'package:social_door/Screens/create_Event/multiForm.dart';
+import 'package:social_door/Screens/create_Event/hosted_event.dart';
+import 'package:social_door/Screens/create_Event/create_event_form.dart';
 
 class TabbarMain extends StatefulWidget {
   TabbarMain({Key? key}) : super(key: key);
@@ -16,9 +17,7 @@ class _TabbarMainState extends State<TabbarMain> {
 
   final _widgetOptions = [
     Home(),
-    CreateEventForm(
-      title: '',
-    ),
+    HostedEvent(),
     Text('Index 2: Events'),
     Text('Index 3: Profile'),
     Menu(),

@@ -6,6 +6,8 @@ import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:provider/provider.dart';
 import 'package:social_door/Api/api.dart';
+import 'package:social_door/Model/getEvents.dart';
+import 'package:social_door/Model/hosted_event_model.dart';
 import 'package:social_door/Screens/Authentication/dataProvider.dart';
 import 'package:social_door/Screens/Home/home.dart';
 import 'package:social_door/Utils/socialAlertDialog.dart';
@@ -16,6 +18,8 @@ class CreateEventProvider extends ChangeNotifier {
   init({required BuildContext context}) {
     this.context = context;
   }
+
+  var hostedEventList = [];
 
   String deviceName = '';
   String deviceVersion = '';
@@ -143,32 +147,47 @@ class CreateEventProvider extends ChangeNotifier {
     }
     return null;
   }
+
+  getHostedEvents(BuildContext context) async {
+    print('Get Hosted Events------------------------------');
+    var authenticationID =
+        Provider.of<DataProvider>(context, listen: false).authenticationID;
+    print('authenticationID: $authenticationID');
+    try {
+      String url = Api().getHostedEvents;
+      var token = Provider.of<DataProvider>(context, listen: false).token;
+      final responce = await http.post(
+        Uri.parse(url),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token,
+        },
+        body: jsonEncode({"hostId": authenticationID}),
+      );
+      print("responce : ${responce.statusCode}");
+      if (responce.statusCode == 200) {
+        var data = jsonDecode(responce.body);
+        var hostedEvents = data['hostedEvents'];
+        print('hostedEvents: $hostedEvents');
+        hostedEventList.clear();
+        for (var i in hostedEvents) {
+          HostedEventModel event = HostedEventModel(
+            id: i['_id'],
+            title: i['title'],
+            eventCharges: i['eventCharges'],
+            categoreyId: i['category']['_id'],
+            categoryName: i['category']['category_name'],
+            eventThumbNail: i['eventThumbNail'],
+            hostedDate: i['hostedDate'],
+          );
+          hostedEventList.add(event);
+        }
+        return hostedEventList;
+      } else {
+        print("hosted responce not true");
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+  }
 }
-
-
-   // 'title': title,
-              // 'category': categorey,
-              // 'hostedDate': date,
-              // 'startTime': "2021-09-18",
-              // 'endTime': "2021-09-18",
-              // 'eventPhone': phone,
-              // 'eventEmailAddress': email,
-              // 'eventCharges': eventcharges,
-              // 'host': "60c8418d228b7b002258a4ea",
-              // 'volume': volNumber,
-              // 'rules': "610e54a2dba82c1c9e84f171",
-              // 'prefrences': selectedPrefrences,
-              // 'amenities': selectedAmentites,
-              // 'userInstructions': userIns,
-              // 'cancellationPolicy': selectedCencelPolicy,
-              // 'venue': {
-              //   'type': type,
-              //   'home': home,
-              //   'street': street,
-              //   'floor': floor,
-              //   'city': city,
-              //   'postal_code': postelCode,
-              //   'coordinates': 123,
-              // },
-              // 'description': description,
-              // 'paypalToken': "sjdflkasd",

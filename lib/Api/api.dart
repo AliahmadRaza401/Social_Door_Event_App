@@ -28,6 +28,7 @@ class Api {
 
   //Event Post
   String createEvent = BASE_URL + "/api/user/events/eventCreationForm";
+  String getHostedEvents = BASE_URL + '/api/user/events/getHostedEvents';
   // GEt All Events
   String getEvents = BASE_URL + "/api/user/events/getEvents";
   String getEventMedia = BASE_URL + "/media/";

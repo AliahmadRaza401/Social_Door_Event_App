@@ -711,9 +711,10 @@ class _CreateEventFormState extends State<CreateEventForm> {
     );
 
     return Scaffold(
-      // appBar: AppBar(
-      //   title: Text(widget.title),
-      // ),
+      appBar: AppBar(
+        backgroundColor: Color(0xff1A1A36),
+        elevation: 0,
+      ),
       body: Container(
         color: Color(0xff1A1A36),
         child: SafeArea(

@@ -7,60 +7,35 @@ import 'package:social_door/Api/api.dart';
 import 'package:social_door/Model/getEvents.dart';
 import 'package:social_door/Screens/Authentication/dataProvider.dart';
 import 'package:http/http.dart' as http;
+import 'package:social_door/Screens/create_Event/create_event_provider.dart';
+import 'package:social_door/Screens/create_Event/create_event_form.dart';
 import 'package:social_door/Utils/loading_animation.dart';
 
-class PostCard extends StatefulWidget {
-  PostCard({Key? key}) : super(key: key);
+class HostedEvent extends StatefulWidget {
+  HostedEvent({Key? key}) : super(key: key);
 
   @override
-  _PostCardState createState() => _PostCardState();
+  _HostedEventState createState() => _HostedEventState();
 }
 
-class _PostCardState extends State<PostCard> {
-  var eventTags;
-  var eventCategory;
-  var events;
+class _HostedEventState extends State<HostedEvent> {
   bool _loading = true;
-
+  var hostedEventList = [];
+  late CreateEventProvider _createEventProvider;
   @override
   void initState() {
+    _createEventProvider =
+        Provider.of<CreateEventProvider>(context, listen: false);
+    gethostedEvents();
     super.initState();
-    getEvents(context);
   }
 
-  getEvents(BuildContext context) async {
-    print('Get Events Run------------------------------');
-    try {
-      String url = Api().getEvents;
-      var token = Provider.of<DataProvider>(context, listen: false).token;
-      final responce = await http.post(
-        Uri.parse(url),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': token,
-        },
-        body: jsonEncode({"cityName": "Lahore"}),
-      );
-      print("responce : ${responce.statusCode}");
-      if (responce.statusCode == 200) {
-        var data = jsonDecode(responce.body);
-        print('data: $data');
-
-        var getEvents = getEventFromJson(responce.body);
-        setState(() {
-          events = getEvents.eventsList;
-          _loading = false;
-        });
-
-        print(events[0].category.categoryName);
-      } else {
-        setState(() {
-          _loading = false;
-        });
-      }
-    } catch (e) {
-      print(e.toString());
-    }
+  gethostedEvents() async {
+    hostedEventList = await _createEventProvider.getHostedEvents(context);
+    print('hostedEventList: $hostedEventList');
+    setState(() {
+      _loading = false;
+    });
   }
 
   List<String> images = <String>[
@@ -71,35 +46,69 @@ class _PostCardState extends State<PostCard> {
   ];
   @override
   Widget build(BuildContext context) {
-    return _loading == true
-        ? Container(
-            height: MediaQuery.of(context).size.height,
-            child: loadingAnimation(context),
-          )
-        : events == null
-            ? Container(
-                height: MediaQuery.of(context).size.height,
-                child: Center(child: Text("Oops! No Data")))
-            : ListView(
-                physics: ClampingScrollPhysics(),
-                shrinkWrap: true,
-                children: [
-                  ListView.builder(
-                      physics: ClampingScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: events == null ? 0 : events.length,
-                      itemBuilder: (context, i) {
-                        return eventCard(
-                            events[i].title.toString(),
-                            events[i].category.categoryName.toString(),
-                            events[i].eventCharges.toString(),
-                            Api().getEventMedia + events[i].eventThumbNail);
-                      })
-                ],
-              );
+    return Scaffold(
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: 
+            (context) => CreateEventForm(title: ''))
+          );
+        },
+        icon: Icon(Icons.add),
+        label: Text('Create Event'),
+      ),
+      body: Container(
+        width: MediaQuery.of(context).size.width,
+        margin: EdgeInsets.symmetric(vertical: 10),
+        child: _loading == true
+            ? loadingAnimation(context)
+            : hostedEventList == null
+                ? Center(child: Text("Crate an Event"))
+                : ListView(
+                    physics: ClampingScrollPhysics(),
+                    shrinkWrap: true,
+                    children: [
+                      ListView.builder(
+                          physics: ClampingScrollPhysics(),
+                          shrinkWrap: true,
+                          itemCount: hostedEventList == null
+                              ? 0
+                              : hostedEventList.length,
+                          itemBuilder: (context, i) {
+                            return eventCard(
+                              hostedEventList[i].title,
+                              hostedEventList[i].categoryName,
+                              hostedEventList[i].eventCharges,
+                              Api().getEventMedia +
+                                  hostedEventList[i].eventThumbNail,
+                            );
+                          })
+                    ],
+                  ),
+      ),
+    );
+    // return events == null
+    //     ? loadingAnimation(context)
+    //     : ListView(
+    //         physics: ClampingScrollPhysics(),
+    //         shrinkWrap: true,
+    //         children: [
+    //           ListView.builder(
+    //               physics: ClampingScrollPhysics(),
+    //               shrinkWrap: true,
+    //               itemCount: events == null ? 0 : events.length,
+    //               itemBuilder: (context, i) {
+    //                 return eventCard(
+    //                     events[i].title.toString(),
+    //                     events[i].category.categoryName.toString(),
+    //                     events[i].eventCharges.toString(),
+    //                     Api().getEventMedia + events[i].eventThumbNail);
+    //               })
+    //         ],
+    //       );
   }
 
-  Widget eventCard(String title, String categoreyName, String rs, url) {
+  Widget eventCard(String title, String categoreyName, rs, url) {
     return Container(
       height: MediaQuery.of(context).size.height * 0.5,
       width: MediaQuery.of(context).size.width * 0.9,
@@ -221,7 +230,7 @@ class _PostCardState extends State<PostCard> {
                   Row(
                     children: <Widget>[
                       _normalText("\$"),
-                      _normalText(rs),
+                      _normalText('$rs'),
                       _normalText(" each"),
                     ],
                   ),

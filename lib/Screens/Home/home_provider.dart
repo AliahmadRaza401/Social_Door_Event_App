@@ -19,6 +19,7 @@ class HomeProvider extends ChangeNotifier {
   Future getAllTags(BuildContext context) async {
     print("------------ Get All Tags");
     var token = Provider.of<DataProvider>(context).token;
+    print('token: $token');
     final responce = await http.post(
       Uri.parse(Api().getAllTags),
       headers: {
@@ -30,39 +31,4 @@ class HomeProvider extends ChangeNotifier {
     print(data);
     return data;
   }
-
-  // Future getAllTags() async {
-  //   try {
-  //     print("---------Get All Tags-------------------");
-  //     // var token = Provider.of<DataProvider>(context).token;
-  //     // print('token: $token');
-  //     final responce = await http.get(
-  //       Uri.parse(Api().getAllTags),
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         'Authorization':
-  //             'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MTA1MzkxNzc5MGY1MjAwMjI3ZWI4MjAiLCJpYXQiOjE2MzA5MjQ2NTEsImV4cCI6MTYzMTAxMTA1MX0.ssiwY09TQfBEmHFjiuHDNutyM5zUujckTHFJBtEvxV8',
-  //       },
-  //     );
-  //     final result = jsonDecode(responce.body);
-  //     if (result['status'] == 200) {
-  //       var data = result['data'];
-  //       print('Tags data: $data');
-  //       // tagsList.clear();
-  //       // for (var i in data) {
-  //       //   HomeTagsModel data = HomeTagsModel(
-  //       //     id: i['_id'],
-  //       //     title: i['tag_name'],
-  //       //   );
-  //       //   tagsList.add(data);
-  //       // }
-  //       // print('boardListData: $boardListData');
-  //       return tagsList;
-  //     } else {
-  //       return "No Result";
-  //     }
-  //   } catch (e) {
-  //     return e.toString();
-  //   }
-  // }
 }
